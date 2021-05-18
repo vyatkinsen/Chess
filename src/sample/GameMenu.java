@@ -17,6 +17,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
+import java.util.LinkedList;
+
 
 
 public class GameMenu extends Application {
@@ -85,6 +87,10 @@ public class GameMenu extends Application {
 		}
 	}
 
-	public static void main(String[] args) { launch(args); }
+	public static void main(String[] args) {
+//		Game game = new Game();
+//		game.gameLoop();
+		launch(args);
+	}
 }
 
