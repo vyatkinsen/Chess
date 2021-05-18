@@ -9,34 +9,38 @@ public abstract class Figure {
 	protected Board board;
 	protected boolean isMoved;
 
-	public Figure(Board board, int color, int y, int x){
+	public Figure(Board board, int color, int y, int x) {
 		this.board = board;
 		this.color = color;
 		this.y = y;
 		this.x = x;
 		this.isMoved = false;
-
-		this.board.placePiece(this, y, x);
+		this.board.setFigureOnBoard(this, y, x);
 	}
 
-	public boolean canMoveTo(int y, int x){ return canMoveGenerics(y, x); }
+	public boolean canMoveTo(int y, int x) {
+		return canMoveGenerics(y, x);
+	}
 
-	protected boolean canMoveGenerics(int yPos, int xPos){
-		if (board.insideBoard(yPos, xPos)){
+	protected boolean canMoveGenerics(int yPos, int xPos) {
+		if (board.insideBoard(yPos, xPos)) {
 			Figure location = board.figureInCell(yPos, xPos);
 			return location == null || location.getPlayerColor() != this.color;
-		}
-		return false;
+		} else return false;
 	}
 
-	public void movingFigure(int yPos, int xPos){
-		if (board.figureInCell(y, x) == this) board.removeFromBoard(this);
+	public void movingFigure(int yPos, int xPos) {
+		if (board.figureInCell(y, x) == this) {
+			board.removeFromBoard(this);
+		}
 		this.y = yPos;
 		this.x = xPos;
 
-		if (board.figureInCell(yPos, xPos) != null) board.figureInCell(yPos, xPos).removeFigure();
+		if (board.figureInCell(yPos, xPos) != null) {
+			board.figureInCell(yPos, xPos).removeFigure();
+		}
 
-		board.placePiece(this, y, x);
+		board.setFigureOnBoard(this, y, x);
 		isMoved = true;
 	}
 
@@ -45,33 +49,39 @@ public abstract class Figure {
 		y = x = -1;
 	}
 
-	public int getY(){ return y; }
+	public int getY() {
+		return y;
+	}
 
-	public int getX(){ return x; }
+	public int getX() {
+		return x;
+	}
 
-	public int getPlayerColor(){ return color; }
+	public int getPlayerColor() {
+		return color;
+	}
 
 	protected boolean verticalAndHorizontal(int yPos, int xPos) {
 		int yFigurePos = this.getY();
 		int xFigurePos = this.getX();
 
-		int countX;
-		int limitX;
-		int countY;
-		int limitY;
+		int countX, limitX, countY, limitY;
 
-		if (yFigurePos == yPos && xFigurePos != xPos || yFigurePos != yPos && xFigurePos == xPos){
-
-			if (xFigurePos > xPos){
+		if (yFigurePos == yPos && xFigurePos != xPos || yFigurePos != yPos && xFigurePos == xPos) {
+			if (xFigurePos > xPos) {
 				countX = xPos + 1;
 				limitX = xFigurePos;
 			} else {
 				countX = xFigurePos + 1;
 				limitX = xPos;
 			}
-			for(; countX < limitX; countX++) if (board.figureInCell(yFigurePos, countX) != null) return false;
+			for(; countX < limitX; countX++) {
+				if (board.figureInCell(yFigurePos, countX) != null) {
+					return false;
+				}
+			}
 
-			if (yFigurePos > yPos){
+			if (yFigurePos > yPos) {
 				countY = yPos + 1;
 				limitY = yFigurePos;
 			} else {
@@ -79,7 +89,9 @@ public abstract class Figure {
 				limitY = yPos;
 			}
 			for(; countY < limitY; countY++) {
-				if (board.figureInCell(countY, xFigurePos) != null) return false;
+				if (board.figureInCell(countY, xFigurePos) != null) {
+					return false;
+				}
 			}
 			return true;
 		} else return false;
@@ -92,15 +104,19 @@ public abstract class Figure {
 		if (abs(xPos - col) == abs(yPos - row)) {
 			int rowOffset, colOffset;
 
-			if(row < yPos) rowOffset = 1;
-			else rowOffset = -1;
+			if(row < yPos) {
+				rowOffset = 1;
+			} else rowOffset = -1;
 
-			if(col < xPos) colOffset = 1;
-			else colOffset = -1;
+			if(col < xPos) {
+				colOffset = 1;
+			} else colOffset = -1;
 
 			int x = col + colOffset;
 			for(int y = row + rowOffset; y != yPos; y += rowOffset) {
-				if (board.figureInCell(y, x) != null) return false;
+				if (board.figureInCell(y, x) != null) {
+					return false;
+				}
 				x += colOffset;
 			} return true;
 		} else return false;

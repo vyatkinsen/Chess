@@ -1,5 +1,4 @@
 package sample;
-
 import javafx.animation.Animation;
 import javafx.animation.FillTransition;
 import javafx.application.Application;
@@ -17,9 +16,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
-import java.util.LinkedList;
-
-
 
 public class GameMenu extends Application {
 
@@ -29,13 +25,17 @@ public class GameMenu extends Application {
 		ImageView img = new ImageView("resources/menuImage.jpg");
 		img.setFitHeight(800);
 		img.setFitWidth(800);
+
 		menuButton newGame = new menuButton("НОВАЯ ИГРА");
 		menuButton exitGame = new menuButton("ВЫХОД");
 		menuGroup mainMenu = new menuGroup(newGame,exitGame);
+
 		newGame.setOnMouseClicked(event -> new sample.MainWindow().start(primaryStage));
 		exitGame.setOnMouseClicked(event -> System.exit(0));
+
 		root.getChildren().add(img);
 		root.getChildren().addAll(new MenuBox(mainMenu));
+
 		primaryStage.setTitle("Шахматы");
 		primaryStage.setScene(new Scene(root, 800, 800));
 		primaryStage.setResizable(false);
@@ -43,7 +43,7 @@ public class GameMenu extends Application {
 	}
 
 	private static class menuButton extends StackPane {
-		public menuButton(String name){
+		public menuButton(String name) {
 			Rectangle bg = new Rectangle(200,20, Color.WHITE);
 			bg.setOpacity(0.5);
 
@@ -53,7 +53,7 @@ public class GameMenu extends Application {
 
 			setAlignment(Pos.CENTER);
 			getChildren().addAll(bg,text);
-			FillTransition st = new FillTransition(Duration.seconds(0.5),bg);
+			FillTransition st = new FillTransition(Duration.seconds(0.45),bg);
 			setOnMouseEntered(event -> {
 				st.setFromValue(Color.DARKGRAY);
 				st.setToValue(Color.YELLOWGREEN);
@@ -69,11 +69,11 @@ public class GameMenu extends Application {
 	}
 
 	private static class menuGroup extends VBox {
-		public menuGroup(menuButton @NotNull ...items){
+		public menuGroup(menuButton @NotNull ...items) {
 			setSpacing(15);
 			setTranslateY(100);
 			setTranslateX(50);
-			for(menuButton item : items){
+			for(menuButton item : items) {
 				getChildren().addAll(item);
 			}
 		}
@@ -81,15 +81,13 @@ public class GameMenu extends Application {
 
 	private static class MenuBox extends Pane{
 		static menuGroup menuGroup;
-		public MenuBox(menuGroup menuGroup){
+		public MenuBox(menuGroup menuGroup) {
 			MenuBox.menuGroup = menuGroup;
 			getChildren().addAll(menuGroup);
 		}
 	}
 
 	public static void main(String[] args) {
-//		Game game = new Game();
-//		game.gameLoop();
 		launch(args);
 	}
 }
