@@ -138,18 +138,60 @@ public class MainWindow extends Application {
 				if (boardForRendering[clckdY][clckdX] == 6 || boardForRendering[clckdY][clckdX] == 16) {
 					pawnToQueenCheck(clckdY, clckdX);
 				}
+				if (boardForRendering[clckdY][clckdX] == 1 || boardForRendering[clckdY][clckdX] == 11){
+					isCastling(prevY, clckdX);
+				}
 
 				isMoving = false;
 				cleanBoard();
 				changePlayer();
 			}
 		}
-		if (noMovesLeft(currentPlayer)) {
-			cleanBoard();
-			enableButtons();
-			showWinner();
-		}
+//		if (noMovesLeft(currentPlayer)) {
+//			cleanBoard();
+//			enableButtons();
+//			showWinner();
+//		}
 		previousButton = bt;
+	}
+
+	private void isCastling(int yKing, int xMove){
+		switch (yKing) {
+			case 0 -> {
+				if (xMove == 6){
+					boardForRendering[0][5] = boardForRendering[0][7];
+					boardForRendering[0][7] = 0;
+					chessBoard.figureInCell(0, 7).removeFigure();
+					addRook(BLACK, 0, 5);
+					buttons[0][5].setGraphic(new ImageView("resources/Rook0.png"));
+					buttons[0][7].setGraphic(null);
+				} else if (xMove == 2){
+					boardForRendering[0][3] = boardForRendering[0][0];
+					boardForRendering[0][0] = 0;
+					chessBoard.figureInCell(0, 0).removeFigure();
+					addRook(BLACK, 0, 3);
+					buttons[0][3].setGraphic(new ImageView("resources/Rook0.png"));
+					buttons[0][0].setGraphic(null);
+				}
+			}
+			case 7 -> {
+				if (xMove == 6){
+					boardForRendering[7][5] = boardForRendering[7][7];
+					boardForRendering[7][7] = 0;
+					chessBoard.figureInCell(7, 7).removeFigure();
+					addRook(WHITE, 7, 5);
+					buttons[7][5].setGraphic(new ImageView("resources/Rook1.png"));
+					buttons[7][7].setGraphic(null);
+				} else if (xMove == 2){
+					boardForRendering[7][3] = boardForRendering[7][0];
+					boardForRendering[7][0] = 0;
+					chessBoard.figureInCell(7, 0).removeFigure();
+					addRook(WHITE, 7, 3);
+					buttons[7][3].setGraphic(new ImageView("resources/Rook1.png"));
+					buttons[7][0].setGraphic(null);
+				}
+			}
+		}
 	}
 
 	private void freeMoveGraphic(int yPos, int xPos, int figure) {
@@ -162,6 +204,24 @@ public class MainWindow extends Application {
 			case 1 -> {
 				verticalAndHorizontalMovesGraphic(yPos, xPos, true);
 				diagonalMovesGraphic(yPos, xPos, true);
+				if (currentPlayer == BLACK && yPos == 0 && chessBoard.figureInCell(0, 5) == null &&
+						!blackKing.isPieceWasMoved() && !chessBoard.figureInCell(0, 7).isPieceWasMoved()){
+					freeCellCheck(0, 6);
+				}
+				if (currentPlayer == BLACK && yPos == 0 && chessBoard.figureInCell(0, 1) == null &&
+						chessBoard.figureInCell(0, 3) == null && !blackKing.isPieceWasMoved() &&
+						!chessBoard.figureInCell(0, 0).isPieceWasMoved()){
+					freeCellCheck(0, 2);
+				}
+				if (currentPlayer == WHITE && yPos == 7 && chessBoard.figureInCell(7, 5) == null &&
+						!whiteKing.isPieceWasMoved() && !chessBoard.figureInCell(7, 7).isPieceWasMoved()){
+					freeCellCheck(7, 6);
+				}
+				if (currentPlayer == WHITE && yPos == 7 && chessBoard.figureInCell(7, 1) == null &&
+						chessBoard.figureInCell(7, 3) == null && !whiteKing.isPieceWasMoved() &&
+						!chessBoard.figureInCell(7, 0).isPieceWasMoved()){
+					freeCellCheck(7, 2);
+				}
 			}
 			case 2 -> {
 				verticalAndHorizontalMovesGraphic(yPos, xPos, false);
@@ -294,6 +354,20 @@ public class MainWindow extends Application {
 		if (InsideBorder(yPos + 1, xPos - 2)) freeCellCheck(yPos + 1, xPos - 2);
 	}
 
+	private boolean freeCellCheck(int yPos, int xPos) {
+		if (boardForRendering[yPos][xPos] == 0) {
+			buttons[yPos][xPos].setStyle("-fx-background-color: yellow");
+			buttons[yPos][xPos].setDisable(false);
+		} else {
+			if (boardForRendering[yPos][xPos] / 10 != currentPlayer) {
+				buttons[yPos][xPos].setStyle("-fx-background-color: yellow");
+				buttons[yPos][xPos].setDisable(false);
+			}
+			return false;
+		}
+		return true;
+	}
+
 	private void enableButtons() {
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -313,20 +387,6 @@ public class MainWindow extends Application {
 				buttons[j][i].setDisable(false);
 			}
 		}
-	}
-
-	private boolean freeCellCheck(int yPos, int xPos) {
-		if (boardForRendering[yPos][xPos] == 0) {
-			buttons[yPos][xPos].setStyle("-fx-background-color: yellow");
-			buttons[yPos][xPos].setDisable(false);
-		} else {
-			if (boardForRendering[yPos][xPos] / 10 != currentPlayer) {
-				buttons[yPos][xPos].setStyle("-fx-background-color: yellow");
-				buttons[yPos][xPos].setDisable(false);
-			}
-			return false;
-		}
-		return true;
 	}
 
 	private boolean InsideBorder(int y,int x) {

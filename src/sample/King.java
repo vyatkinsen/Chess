@@ -11,17 +11,18 @@ public class King extends Figure {
 	}
 
 	public boolean canMoveTo(int yPos, int xPos) {
-		if(canMoveGenerics(yPos,xPos)) {
+		if(canMoveFigures(yPos,xPos)) {
 			return kingMove(yPos, xPos);
 		} else return false;
 	}
 
 	private boolean kingMove(int yPos, int xPos) {
-		int absoluteX = Math.abs(yPos - this.getY());
-		int absoluteY = Math.abs(xPos - this.getX());
-		
-		if (absoluteX <= 1 && absoluteY <= 1){
-			if (absoluteX == 0 && absoluteY == 0) return false;
+		int yMove = Math.abs(yPos - this.getY());
+		int xMove = Math.abs(xPos - this.getX());
+
+		if (xMove == 2 && yMove ==0) return true;
+		if (yMove <= 1 && xMove <= 1){
+			if (yMove == 0 && xMove == 0) return false;
 			return true;
 		} else return false;
 	}

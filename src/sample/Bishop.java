@@ -12,7 +12,7 @@ public class Bishop extends Figure {
 
 	@Override
 	public boolean canMoveTo(int yPos, int xPos) {
-		if(canMoveGenerics(yPos,xPos)) {
+		if(canMoveFigures(yPos,xPos)) {
 			return diagonal(yPos, xPos);
 		} else return false;
 	}

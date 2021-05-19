@@ -11,7 +11,7 @@ public class Rook extends Figure {
 	}
 	
 	public boolean canMoveTo(int yPos, int xPos) {
-		if(canMoveGenerics(yPos,xPos)) {
+		if(canMoveFigures(yPos,xPos)) {
 			return verticalAndHorizontal(yPos, xPos);
 		} else return false;
 	}

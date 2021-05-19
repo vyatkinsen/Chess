@@ -12,7 +12,7 @@ public class Pawn extends Figure {
 	}
 	
 	public boolean canMoveTo(int yPos, int xPos){
-		if(canMoveGenerics(yPos, xPos)) return pawnMove(yPos, xPos);
+		if(canMoveFigures(yPos, xPos)) return pawnMove(yPos, xPos);
 		else return false;
 	}
 

@@ -18,11 +18,15 @@ public abstract class Figure {
 		this.board.setFigureOnBoard(this, y, x);
 	}
 
-	public boolean canMoveTo(int y, int x) {
-		return canMoveGenerics(y, x);
+	public boolean isPieceWasMoved(){
+		return isMoved;
 	}
 
-	protected boolean canMoveGenerics(int yPos, int xPos) {
+	public boolean canMoveTo(int y, int x) {
+		return canMoveFigures(y, x);
+	}
+
+	protected boolean canMoveFigures(int yPos, int xPos) {
 		if (board.insideBoard(yPos, xPos)) {
 			Figure location = board.figureInCell(yPos, xPos);
 			return location == null || location.getPlayerColor() != this.color;

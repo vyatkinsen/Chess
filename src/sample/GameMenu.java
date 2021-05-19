@@ -17,6 +17,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.InputStream;
+
 public class GameMenu extends Application {
 
 	@Override
@@ -25,6 +27,7 @@ public class GameMenu extends Application {
 		ImageView img = new ImageView("resources/menuImage.jpg");
 		img.setFitHeight(800);
 		img.setFitWidth(800);
+		InputStream iconStream = getClass().getResourceAsStream("resources/icon.png");
 
 		menuButton newGame = new menuButton("НОВАЯ ИГРА");
 		menuButton exitGame = new menuButton("ВЫХОД");

@@ -11,7 +11,7 @@ public class Knight extends Figure {
 	}
 
 	public boolean canMoveTo(int yPos, int xPos) {
-		if (canMoveGenerics(yPos,xPos)) {
+		if (canMoveFigures(yPos,xPos)) {
 			if (Math.abs(this.getY() - yPos) == 2 && Math.abs(this.getX() - xPos) == 1) return true;
 			if (Math.abs(this.getY() - yPos) == 1 && Math.abs(this.getX() - xPos) == 2) return true;
 		}
