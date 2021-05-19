@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.util.LinkedList;
+import java.util.List;
 
 public class MainWindow extends Application {
 	public static final int BLACK = 0;
@@ -81,7 +82,7 @@ public class MainWindow extends Application {
 				cell.setLayoutY(j * 100);
 
 				if (chessBoard.figureInCell(j, i) != null) {
-					cell.setGraphic(new ImageView("resources/" + chessBoard.figureInCell(j, i) + chessBoard.figureInCell(j, i).getPlayerColor() + ".png"));
+					cell.setGraphic(new ImageView("resources/" + chessBoard.figureInCell(j, i) + chessBoard.figureInCell(j, i).getFigureColor() + ".png"));
 				}
 
 				if ((i + j) % 2 == 0) {
@@ -116,7 +117,7 @@ public class MainWindow extends Application {
 			int prevY = (int) (previousButton.getLayoutY()/100);
 			int prevX = (int) (previousButton.getLayoutX()/100);
 			Figure tempFig = chessBoard.figureInCell(prevY, prevX);
-			int col = chessBoard.figureInCell(prevY, prevX).getPlayerColor();
+			int col = chessBoard.figureInCell(prevY, prevX).getFigureColor();
 
 			if (chessBoard.figureInCell(prevY, prevX).canMoveTo(clckdY, clckdX)) {
 				chessBoard.figureInCell(prevY, prevX).movingFigure(clckdY, clckdX);
@@ -147,11 +148,11 @@ public class MainWindow extends Application {
 				changePlayer();
 			}
 		}
-//		if (noMovesLeft(currentPlayer)) {
-//			cleanBoard();
-//			enableButtons();
-//			showWinner();
-//		}
+		if (noMovesLeft(currentPlayer)) {
+			cleanBoard();
+			enableButtons();
+			showWinner();
+		}
 		previousButton = bt;
 	}
 
@@ -410,36 +411,35 @@ public class MainWindow extends Application {
 
 	private boolean noMovesLeft(int color) {
 		int prevY, prevX;
-		Figure figure;
-		LinkedList<Figure> enemyFigures;
+		Figure tempFigure;
+		List<Figure> correctFiguresList;
 
 		if (color == BLACK) {
-			enemyFigures = blackFiguresList;
+			correctFiguresList = blackFiguresList;
 		} else {
-			enemyFigures = whiteFiguresList;
+			correctFiguresList = whiteFiguresList;
 		}
-		for (Figure currentPiece : enemyFigures) {
+		for (Figure currFigure: correctFiguresList) {
 			for (int i = 0; i < 8; i++) {
 				for (int j = 0; j < 8; j++) {
-
-					if (currentPiece.canMoveTo(j, i)) {
-						figure = chessBoard.figureInCell(j, i);
-
-						prevY = currentPiece.getY();
-						prevX = currentPiece.getX();
-
-						currentPiece.movingFigure(j, i);
+					if (currFigure.canMoveTo(j, i)) {
+						tempFigure = chessBoard.figureInCell(j, i);
+						prevY = currFigure.getY();
+						prevX = currFigure.getX();
+						boolean move = currFigure.getIsMoved();
+						currFigure.movingFigure(j, i);
 
 						if (!isKingInCheck(color)) {
-							currentPiece.movingFigure(prevY, prevX);
-							if (figure != null) {
-								figure.movingFigure(j, i);
+							currFigure.movingFigure(prevY, prevX);
+							if (tempFigure != null) {
+								addNewFigure(j, i, tempFigure.toString(), tempFigure.getFigureColor());
 							}
+							currFigure.setIsMoved(move);
 							return false;
 						} else {
-							currentPiece.movingFigure(prevY, prevX);
-							if (figure != null) {
-								figure.movingFigure(j, i);
+							currFigure.movingFigure(prevY, prevX);
+							if (tempFigure != null) {
+								addNewFigure(j, i, tempFigure.toString(), tempFigure.getFigureColor());
 							}
 						}
 					}

@@ -33,7 +33,7 @@ public abstract class Figure {
 	protected boolean canMoveFigures(int yPos, int xPos) {
 		if (board.insideBoard(yPos, xPos)) {
 			Figure location = board.figureInCell(yPos, xPos);
-			return location == null || location.getPlayerColor() != this.color;
+			return location == null || location.getFigureColor() != this.color;
 		} else return false;
 	}
 
@@ -65,8 +65,13 @@ public abstract class Figure {
 		return x;
 	}
 
-	public int getPlayerColor() {
+	public int getFigureColor() {
 		return color;
+	}
+
+	public String getStringPlayerColor() {
+		if (color == 1) return "Black";
+		else return "White";
 	}
 
 	protected boolean verticalAndHorizontal(int yPos, int xPos) {

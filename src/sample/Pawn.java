@@ -22,7 +22,7 @@ public class Pawn extends Figure {
 		int twoCell;
 		Figure target = board.figureInCell(yPos, xPos);
 		
-		if (this.getPlayerColor() == 0) {
+		if (this.getFigureColor() == 0) {
 			oneCell = 1;
 			twoCell = 2;
 		} else {
