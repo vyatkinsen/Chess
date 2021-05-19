@@ -205,21 +205,21 @@ public class MainWindow extends Application {
 				verticalAndHorizontalMovesGraphic(yPos, xPos, true);
 				diagonalMovesGraphic(yPos, xPos, true);
 				if (currentPlayer == BLACK && yPos == 0 && chessBoard.figureInCell(0, 5) == null &&
-						!blackKing.isPieceWasMoved() && !chessBoard.figureInCell(0, 7).isPieceWasMoved()){
+						!blackKing.getIsMoved() && !chessBoard.figureInCell(0, 7).getIsMoved()){
 					freeCellCheck(0, 6);
 				}
 				if (currentPlayer == BLACK && yPos == 0 && chessBoard.figureInCell(0, 1) == null &&
-						chessBoard.figureInCell(0, 3) == null && !blackKing.isPieceWasMoved() &&
-						!chessBoard.figureInCell(0, 0).isPieceWasMoved()){
+						chessBoard.figureInCell(0, 3) == null && !blackKing.getIsMoved() &&
+						!chessBoard.figureInCell(0, 0).getIsMoved()){
 					freeCellCheck(0, 2);
 				}
 				if (currentPlayer == WHITE && yPos == 7 && chessBoard.figureInCell(7, 5) == null &&
-						!whiteKing.isPieceWasMoved() && !chessBoard.figureInCell(7, 7).isPieceWasMoved()){
+						!whiteKing.getIsMoved() && !chessBoard.figureInCell(7, 7).getIsMoved()){
 					freeCellCheck(7, 6);
 				}
 				if (currentPlayer == WHITE && yPos == 7 && chessBoard.figureInCell(7, 1) == null &&
-						chessBoard.figureInCell(7, 3) == null && !whiteKing.isPieceWasMoved() &&
-						!chessBoard.figureInCell(7, 0).isPieceWasMoved()){
+						chessBoard.figureInCell(7, 3) == null && !whiteKing.getIsMoved() &&
+						!chessBoard.figureInCell(7, 0).getIsMoved()){
 					freeCellCheck(7, 2);
 				}
 			}
@@ -481,9 +481,12 @@ public class MainWindow extends Application {
 		switch (figure) {
 			case "Pawn" -> addPawn(color, yPos, xPos);
 			case "Knight" -> addKnight(color, yPos, xPos);
-			case "Rook" -> addRook(color, yPos, xPos);
 			case "Bishop" -> addBishop(color, yPos, xPos);
 			case "Queen" -> addQueen(color, yPos, xPos);
+			case "Rook" -> {
+				addRook(color, yPos, xPos);
+				chessBoard.figureInCell(yPos, xPos).setIsMoved(true);
+			}
 			case "King" -> {
 				if (color == 0) {
 					blackKing = new King(chessBoard, color, yPos, xPos);

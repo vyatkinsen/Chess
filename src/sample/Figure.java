@@ -18,8 +18,12 @@ public abstract class Figure {
 		this.board.setFigureOnBoard(this, y, x);
 	}
 
-	public boolean isPieceWasMoved(){
+	public boolean getIsMoved(){
 		return isMoved;
+	}
+
+	public void setIsMoved(boolean isMoved){
+		this.isMoved = isMoved;
 	}
 
 	public boolean canMoveTo(int y, int x) {
