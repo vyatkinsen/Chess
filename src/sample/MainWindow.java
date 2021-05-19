@@ -178,8 +178,6 @@ public class MainWindow extends Application {
 			enableButtons();
 			showWinner();
 		}
-		chessBoard.printBoard();
-
 		previousButton = bt;
 	}
 
