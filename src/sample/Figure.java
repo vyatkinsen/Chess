@@ -72,7 +72,7 @@ public abstract class Figure {
 	}
 
 	public String getStringPlayerColor() {
-		if (color == 1) return "Black";
+		if (color == 0) return "Black";
 		else return "White";
 	}
 

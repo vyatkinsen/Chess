@@ -82,7 +82,6 @@ public class MainWindow extends Application {
 				cell.setMinWidth(100);
 				cell.setLayoutX(i * 100);
 				cell.setLayoutY(j * 100);
-
 				if (chessBoard.figureInCell(j, i) != null) {
 					cell.setGraphic(new ImageView("resources/" + chessBoard.figureInCell(j, i) + chessBoard.figureInCell(j, i).getFigureColor() + ".png"));
 				}
@@ -116,10 +115,16 @@ public class MainWindow extends Application {
 				isMoving = false;
 			} else isMoving = true;
 		} else if (isMoving) {
+			int col2 = -1;
 			int prevY = (int) (previousButton.getLayoutY()/100);
 			int prevX = (int) (previousButton.getLayoutX()/100);
 			Figure tempFig = chessBoard.figureInCell(prevY, prevX);
+			Figure secTempFig = chessBoard.figureInCell(clckdY, clckdX);
 			int col = chessBoard.figureInCell(prevY, prevX).getFigureColor();
+
+			if (chessBoard.figureInCell(clckdY, clckdX) != null) {
+				col2 = chessBoard.figureInCell(clckdY, clckdX).getFigureColor();
+			}
 
 			if (chessBoard.figureInCell(prevY, prevX).canMoveTo(clckdY, clckdX)) {
 				chessBoard.figureInCell(prevY, prevX).movingFigure(clckdY, clckdX);
@@ -128,6 +133,9 @@ public class MainWindow extends Application {
 			if (currentPlayer == BLACK && isKingInCheck(BLACK) || currentPlayer == WHITE && isKingInCheck(WHITE)) {
 				chessBoard.figureInCell(clckdY, clckdX).removeFigure();
 				addNewFigure(prevY, prevX, tempFig.toString(), col);
+				if (secTempFig != null) {
+					addNewFigure(clckdY, clckdX, secTempFig.toString(), col2);
+				}
 				cleanBoard();
 				isMoving = false;
 				return;
@@ -148,7 +156,7 @@ public class MainWindow extends Application {
 						xPawnBrokenCell = clckdX;
 					}
 
-					if (boardForRendering[prevY][prevX] % 10 == 6){
+					if (boardForRendering[prevY][prevX] % 10 == 6 && Math.abs(clckdX - prevX) == 1){
 						buttons[prevY][clckdX].setGraphic(null);
 						if (chessBoard.figureInCell(prevY, clckdX) != null){
 							chessBoard.figureInCell(prevY, clckdX).removeFigure();
@@ -160,7 +168,6 @@ public class MainWindow extends Application {
 				if (boardForRendering[clckdY][clckdX] == 1 || boardForRendering[clckdY][clckdX] == 11){
 					isCastling(prevY, clckdX);
 				}
-
 				isMoving = false;
 				cleanBoard();
 				changePlayer();
@@ -171,6 +178,8 @@ public class MainWindow extends Application {
 			enableButtons();
 			showWinner();
 		}
+		chessBoard.printBoard();
+
 		previousButton = bt;
 	}
 
@@ -268,14 +277,18 @@ public class MainWindow extends Application {
 				if ((InsideBorder(yPos + offset, xPos + 1) && boardForRendering[yPos + offset][xPos + 1] != 0 &&
 						boardForRendering[yPos + offset][xPos + 1] / 10 != currentPlayer) ||
 						(yPos + offset == yPawnBrokenCell && xPos + 1 == xPawnBrokenCell)) {
-					chessBoard.figureInCell(yPos, xPos).setBrokeCell(true);
+					if (yPos + offset == yPawnBrokenCell && xPos + 1 == xPawnBrokenCell) {
+						chessBoard.figureInCell(yPos, xPos).setBrokeCell(true);
+					}
 					buttons[yPos + offset][xPos + 1].setStyle("-fx-background-color: yellow");
 					buttons[yPos + offset][xPos + 1].setDisable(false);
 				}
 				if ((InsideBorder(yPos + offset, xPos - 1) && boardForRendering[yPos + offset][xPos - 1] != 0 &&
 						boardForRendering[yPos + offset][xPos - 1] / 10 != currentPlayer) ||
 						(yPos + offset == yPawnBrokenCell && xPos - 1 == xPawnBrokenCell)) {
-					chessBoard.figureInCell(yPos, xPos).setBrokeCell(true);
+					if (yPos + offset == yPawnBrokenCell && xPos - 1 == xPawnBrokenCell) {
+						 chessBoard.figureInCell(yPos, xPos).setBrokeCell(true);
+					}
 					buttons[yPos + offset][xPos - 1].setStyle("-fx-background-color: yellow");
 					buttons[yPos + offset][xPos - 1].setDisable(false);
 				}
@@ -560,6 +573,7 @@ public class MainWindow extends Application {
 	}
 
 	private void addQueen(int color, int y, int x){
+
 		Queen queen = new Queen(chessBoard, color, y, x);
 		figuresListAdd(queen, color);
 	}
@@ -590,7 +604,9 @@ public class MainWindow extends Application {
 		} else whiteFiguresList.add(piece);
 	}
 
-	public static void main(String[] args) { launch(args); }
+	public static void main(String[] args) {
+		launch(args);
+	}
 
 	private void showWinner() {
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
