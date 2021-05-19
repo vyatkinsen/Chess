@@ -206,21 +206,24 @@ public class MainWindow extends Application {
 				verticalAndHorizontalMovesGraphic(yPos, xPos, true);
 				diagonalMovesGraphic(yPos, xPos, true);
 				if (currentPlayer == BLACK && yPos == 0 && chessBoard.figureInCell(0, 5) == null &&
-						!blackKing.getIsMoved() && !chessBoard.figureInCell(0, 7).getIsMoved()){
+						!blackKing.getIsMoved() && !chessBoard.figureInCell(0, 7).getIsMoved() &&
+						!isCellBroken(BLACK, 0, 5)){
 					freeCellCheck(0, 6);
 				}
 				if (currentPlayer == BLACK && yPos == 0 && chessBoard.figureInCell(0, 1) == null &&
 						chessBoard.figureInCell(0, 3) == null && !blackKing.getIsMoved() &&
-						!chessBoard.figureInCell(0, 0).getIsMoved()){
+						!chessBoard.figureInCell(0, 0).getIsMoved() &&
+						!isCellBroken(BLACK, 0, 3)){
 					freeCellCheck(0, 2);
 				}
 				if (currentPlayer == WHITE && yPos == 7 && chessBoard.figureInCell(7, 5) == null &&
-						!whiteKing.getIsMoved() && !chessBoard.figureInCell(7, 7).getIsMoved()){
+						!whiteKing.getIsMoved() && !chessBoard.figureInCell(7, 7).getIsMoved() &&
+						!isCellBroken(WHITE, 7, 5)){
 					freeCellCheck(7, 6);
 				}
 				if (currentPlayer == WHITE && yPos == 7 && chessBoard.figureInCell(7, 1) == null &&
 						chessBoard.figureInCell(7, 3) == null && !whiteKing.getIsMoved() &&
-						!chessBoard.figureInCell(7, 0).getIsMoved()){
+						!chessBoard.figureInCell(7, 0).getIsMoved() && !isCellBroken(WHITE, 7, 3)){
 					freeCellCheck(7, 2);
 				}
 			}
@@ -420,13 +423,15 @@ public class MainWindow extends Application {
 			correctFiguresList = whiteFiguresList;
 		}
 		for (Figure currFigure: correctFiguresList) {
+			boolean move = currFigure.getIsMoved();
 			for (int i = 0; i < 8; i++) {
 				for (int j = 0; j < 8; j++) {
+
 					if (currFigure.canMoveTo(j, i)) {
 						tempFigure = chessBoard.figureInCell(j, i);
 						prevY = currFigure.getY();
 						prevX = currFigure.getX();
-						boolean move = currFigure.getIsMoved();
+
 						currFigure.movingFigure(j, i);
 
 						if (!isKingInCheck(color)) {
@@ -445,6 +450,7 @@ public class MainWindow extends Application {
 					}
 				}
 			}
+			currFigure.setIsMoved(move);
 		}
 		return true;
 	}
@@ -465,6 +471,21 @@ public class MainWindow extends Application {
 
 		for (Figure enemyFigure : enemyFigures) {
 			if (enemyFigure.canMoveTo(yKing, xKing)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isCellBroken(int color, int yPos, int xPos) {
+		LinkedList<Figure> enemyFigures;
+		if (color == BLACK) {
+			enemyFigures = whiteFiguresList;
+		} else {
+			enemyFigures = blackFiguresList;
+		}
+		for (Figure enemyFigure : enemyFigures) {
+			if (enemyFigure.canMoveTo(yPos, xPos)) {
 				return true;
 			}
 		}
