@@ -8,6 +8,8 @@ public abstract class Figure {
 	private final int color;
 	protected Board board;
 	protected boolean isMoved;
+	public boolean canBrokeCell;
+
 
 	public Figure(Board board, int color, int y, int x) {
 		this.board = board;
@@ -133,5 +135,9 @@ public abstract class Figure {
 				x += colOffset;
 			} return true;
 		} else return false;
+	}
+
+	public void setBrokeCell(Boolean can) {
+		canBrokeCell = true;
 	}
 }

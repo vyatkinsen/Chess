@@ -19,6 +19,8 @@ public class MainWindow extends Application {
 	private LinkedList<Figure> whiteFiguresList;
 	private King blackKing;
 	private King whiteKing;
+	private int yPawnBrokenCell = -1;
+	private int xPawnBrokenCell = -1;
 
 	private final Pane root = new Pane();
 
@@ -131,14 +133,30 @@ public class MainWindow extends Application {
 				return;
 			} else {
 				boardForRendering[clckdY][clckdX] = boardForRendering[prevY][prevX];
-				boardForRendering[prevY][prevX] = 0;
-
 				bt.setGraphic(previousButton.getGraphic());
 				previousButton.setGraphic(null);
 
-				if (boardForRendering[clckdY][clckdX] == 6 || boardForRendering[clckdY][clckdX] == 16) {
+				if (boardForRendering[clckdY][clckdX] % 10 == 6) {
 					pawnToQueenCheck(clckdY, clckdX);
+					int offset;
+					if (currentPlayer == BLACK) {
+						offset = -1;
+					} else offset = 1;
+
+					if (Math.abs(clckdY - prevY) == 2 && isCellBrokenByPawn(currentPlayer, clckdY + offset, clckdX)) {
+						yPawnBrokenCell = clckdY + offset;
+						xPawnBrokenCell = clckdX;
+					}
+
+					if (boardForRendering[prevY][prevX] % 10 == 6){
+						buttons[prevY][clckdX].setGraphic(null);
+						if (chessBoard.figureInCell(prevY, clckdX) != null){
+							chessBoard.figureInCell(prevY, clckdX).removeFigure();
+						}
+					}
 				}
+				boardForRendering[prevY][prevX] = 0;
+
 				if (boardForRendering[clckdY][clckdX] == 1 || boardForRendering[clckdY][clckdX] == 11){
 					isCastling(prevY, clckdX);
 				}
@@ -207,23 +225,23 @@ public class MainWindow extends Application {
 				diagonalMovesGraphic(yPos, xPos, true);
 				if (currentPlayer == BLACK && yPos == 0 && chessBoard.figureInCell(0, 5) == null &&
 						!blackKing.getIsMoved() && !chessBoard.figureInCell(0, 7).getIsMoved() &&
-						!isCellBroken(BLACK, 0, 5)){
+						isCellBroken(BLACK, 0, 5)){
 					freeCellCheck(0, 6);
 				}
 				if (currentPlayer == BLACK && yPos == 0 && chessBoard.figureInCell(0, 1) == null &&
 						chessBoard.figureInCell(0, 3) == null && !blackKing.getIsMoved() &&
 						!chessBoard.figureInCell(0, 0).getIsMoved() &&
-						!isCellBroken(BLACK, 0, 3)){
+						isCellBroken(BLACK, 0, 3)){
 					freeCellCheck(0, 2);
 				}
 				if (currentPlayer == WHITE && yPos == 7 && chessBoard.figureInCell(7, 5) == null &&
 						!whiteKing.getIsMoved() && !chessBoard.figureInCell(7, 7).getIsMoved() &&
-						!isCellBroken(WHITE, 7, 5)){
+						isCellBroken(WHITE, 7, 5)){
 					freeCellCheck(7, 6);
 				}
 				if (currentPlayer == WHITE && yPos == 7 && chessBoard.figureInCell(7, 1) == null &&
 						chessBoard.figureInCell(7, 3) == null && !whiteKing.getIsMoved() &&
-						!chessBoard.figureInCell(7, 0).getIsMoved() && !isCellBroken(WHITE, 7, 3)){
+						!chessBoard.figureInCell(7, 0).getIsMoved() && isCellBroken(WHITE, 7, 3)){
 					freeCellCheck(7, 2);
 				}
 			}
@@ -243,19 +261,21 @@ public class MainWindow extends Application {
 					buttons[yPos - 2][xPos].setStyle("-fx-background-color: yellow");
 					buttons[yPos - 2][xPos].setDisable(false);
 				}
-				if (InsideBorder(yPos + offset, xPos) && boardForRendering[yPos + offset][xPos] == 0) {
+				if (boardForRendering[yPos + offset][xPos] == 0) {
 					buttons[yPos + offset][xPos].setStyle("-fx-background-color: yellow");
 					buttons[yPos + offset][xPos].setDisable(false);
 				}
-				if (InsideBorder(yPos + offset, xPos + 1) &&
-						boardForRendering[yPos + offset][xPos + 1] != 0 &&
-						boardForRendering[yPos + offset][xPos + 1] / 10 != currentPlayer) {
+				if ((InsideBorder(yPos + offset, xPos + 1) && boardForRendering[yPos + offset][xPos + 1] != 0 &&
+						boardForRendering[yPos + offset][xPos + 1] / 10 != currentPlayer) ||
+						(yPos + offset == yPawnBrokenCell && xPos + 1 == xPawnBrokenCell)) {
+					chessBoard.figureInCell(yPos, xPos).setBrokeCell(true);
 					buttons[yPos + offset][xPos + 1].setStyle("-fx-background-color: yellow");
 					buttons[yPos + offset][xPos + 1].setDisable(false);
 				}
-				if (InsideBorder(yPos + offset, xPos - 1) && // Проверка на возможность побить вражескую фигуру
-						boardForRendering[yPos + offset][xPos - 1] != 0 &&
-						boardForRendering[yPos + offset][xPos - 1] / 10 != currentPlayer) {
+				if ((InsideBorder(yPos + offset, xPos - 1) && boardForRendering[yPos + offset][xPos - 1] != 0 &&
+						boardForRendering[yPos + offset][xPos - 1] / 10 != currentPlayer) ||
+						(yPos + offset == yPawnBrokenCell && xPos - 1 == xPawnBrokenCell)) {
+					chessBoard.figureInCell(yPos, xPos).setBrokeCell(true);
 					buttons[yPos + offset][xPos - 1].setStyle("-fx-background-color: yellow");
 					buttons[yPos + offset][xPos - 1].setDisable(false);
 				}
@@ -477,6 +497,25 @@ public class MainWindow extends Application {
 		return false;
 	}
 
+	private boolean isCellBrokenByPawn(int color, int yPos, int xPos) {
+		LinkedList<Figure> enemyFigures;
+		int offset;
+		if (color == BLACK) {
+			enemyFigures = whiteFiguresList;
+			offset = 1;
+		} else {
+			enemyFigures = blackFiguresList;
+			offset = -1;
+		}
+
+		for (Figure enemyFigure : enemyFigures) {
+			if (enemyFigure instanceof Pawn && enemyFigure.getY() == yPos + offset && (enemyFigure.getX() == xPos + 1 || enemyFigure.getX() == xPos - 1)){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private boolean isCellBroken(int color, int yPos, int xPos) {
 		LinkedList<Figure> enemyFigures;
 		if (color == BLACK) {
@@ -486,10 +525,10 @@ public class MainWindow extends Application {
 		}
 		for (Figure enemyFigure : enemyFigures) {
 			if (enemyFigure.canMoveTo(yPos, xPos)) {
-				return true;
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	private void changePlayer() {

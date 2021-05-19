@@ -1,7 +1,6 @@
 package sample;
 
 public class Pawn extends Figure {
-	
 	public Pawn(Board board, int color, int y, int x) {
 		super(board, color, y, x);
 	}
@@ -16,7 +15,6 @@ public class Pawn extends Figure {
 		else return false;
 	}
 
-
 	private boolean pawnMove(int yPos, int xPos){
 		int oneCell;
 		int twoCell;
@@ -29,7 +27,8 @@ public class Pawn extends Figure {
 			oneCell = -1;
 			twoCell = -2;
 		}
-		if (yPos - this.getY() == oneCell && (xPos == this.getX() && target == null || Math.abs(this.getX() - xPos) == 1 && target != null)) {
+		if (yPos - this.getY() == oneCell && (xPos == this.getX() && target == null || Math.abs(this.getX() - xPos) == 1 && target != null) || canBrokeCell) {
+			canBrokeCell = false;
 			return true;
 		} else if (!isMoved && yPos - this.getY() == twoCell && xPos == this.getX() && board.figureInCell(yPos + twoCell, xPos) == null) {
 			return true;
