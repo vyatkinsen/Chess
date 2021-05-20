@@ -5,7 +5,6 @@ public class Pawn extends Figure {
 		super(board, color, y, x);
 	}
 
-
 	@Override
 	public String toString() {
 		return "Pawn";
