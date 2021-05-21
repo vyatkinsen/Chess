@@ -1,6 +1,7 @@
 package main.java.sample;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class Board {
 	public static final int BLACK = 0;
@@ -114,6 +115,72 @@ public class Board {
 		return whiteKing;
 	}
 
+	public boolean noMovesLeft(int color) {
+		int prevY, prevX;
+		Figure tempFigure;
+		List<Figure> correctFiguresList;
+
+		if (color == BLACK) {
+			correctFiguresList = this.getBlackFiguresList();
+		} else {
+			correctFiguresList = this.getWhiteFiguresList();
+		}
+		for (Figure currFigure: correctFiguresList) {
+			boolean move = currFigure.getIsMoved();
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+
+					if (currFigure.canMoveTo(j, i)) {
+						tempFigure = this.figureInCell(j, i);
+						prevY = currFigure.getY();
+						prevX = currFigure.getX();
+
+						currFigure.movingFigure(j, i);
+
+						if (!isKingInCheck(color)) {
+							currFigure.movingFigure(prevY, prevX);
+							if (tempFigure != null) {
+								this.addNewFigure(j, i, tempFigure.toString(), tempFigure.getFigureColor());
+							}
+							currFigure.setIsMoved(move);
+							return false;
+						} else {
+							currFigure.movingFigure(prevY, prevX);
+							if (tempFigure != null) {
+								this.addNewFigure(j, i, tempFigure.toString(), tempFigure.getFigureColor());
+							}
+						}
+					}
+				}
+			}
+			currFigure.setIsMoved(move);
+		}
+		return true;
+	}
+
+	public boolean isKingInCheck(int color) {
+		if (color == BLACK) {
+			return blackKing.isKingInCheck(this.getWhiteFiguresList());
+		} else {
+			return whiteKing.isKingInCheck(this.getBlackFiguresList());
+		}
+	}
+
+	public boolean isCellBroken(int color, int yPos, int xPos) {
+		LinkedList<Figure> enemyFigures;
+		if (color == BLACK) {
+			enemyFigures = this.getWhiteFiguresList();
+		} else {
+			enemyFigures = this.getBlackFiguresList();
+		}
+		for (Figure enemyFigure : enemyFigures) {
+			if (enemyFigure.canMoveTo(yPos, xPos)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public void initBoard(){
 		blackKing = new King(this, BLACK, 0, 4);
 		whiteKing = new King(this, WHITE, 7, 4);
@@ -140,6 +207,7 @@ public class Board {
 			addPawn(WHITE, 6, x);
 		}
 	}
+
 
 	public void printBoard() {
 		for (int y = 0; y < 8; y++) {
