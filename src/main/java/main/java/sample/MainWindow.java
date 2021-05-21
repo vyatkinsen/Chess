@@ -16,8 +16,6 @@ public class MainWindow extends Application {
 
 	private int currentPlayer = WHITE;
 	private Board chessBoard;
-	private LinkedList<Figure> blackFiguresList;
-	private LinkedList<Figure> whiteFiguresList;
 	private King blackKing;
 	private King whiteKing;
 	private int yPawnBrokenCell = -1;
@@ -42,39 +40,17 @@ public class MainWindow extends Application {
 
 	@Override
 	public void start(Stage boardStage) {
+		chessBoard = new Board();
+		chessBoard.initBoard();
+		blackKing = chessBoard.getBlackKing();
+		whiteKing = chessBoard.getWhiteKing();
+
 		buttonOnBoard();
 		boardStage.setScene(new Scene(root, 800, 800));
 		boardStage.show();
 	}
 
 	private void buttonOnBoard(){
-		chessBoard = new Board();
-		currentPlayer = WHITE;
-		blackFiguresList = new LinkedList<>();
-		whiteFiguresList = new LinkedList<>();
-		blackKing = new King(chessBoard, BLACK, 0, 4);
-		whiteKing = new King(chessBoard, WHITE, 7, 4);
-		blackFiguresList.add(blackKing);
-		whiteFiguresList.add(whiteKing);
-		addQueen(BLACK, 0, 3);
-		addQueen(WHITE, 7, 3);
-		addBishop(BLACK, 0, 2);
-		addBishop(WHITE, 7, 2);
-		addBishop(BLACK, 0, 5);
-		addBishop(WHITE, 7, 5);
-		addKnight(BLACK, 0, 1);
-		addKnight(WHITE, 7, 1);
-		addKnight(BLACK, 0, 6);
-		addKnight(WHITE, 7, 6);
-		addRook(BLACK, 0, 0);
-		addRook(BLACK, 0, 7);
-		addRook(WHITE, 7, 0);
-		addRook(WHITE, 7, 7);
-		for (int x = 0; x < 8; x++){
-			addPawn(BLACK, 1, x);
-			addPawn(WHITE, 6, x);
-		}
-
 		for(int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				Button cell = new Button();
@@ -124,40 +100,38 @@ public class MainWindow extends Application {
 			Figure tempFig = chessBoard.figureInCell(prevY, prevX);
 			Figure secTempFig = chessBoard.figureInCell(clckdY, clckdX);
 
-			if (chessBoard.figureInCell(prevY, prevX) != null){
-				col = chessBoard.figureInCell(prevY, prevX).getFigureColor();
-			}
+			if (chessBoard.figureInCell(prevY, prevX) != null) col = chessBoard.figureInCell(prevY, prevX).getFigureColor();
 
-			if (chessBoard.figureInCell(clckdY, clckdX) != null) {
-				col2 = chessBoard.figureInCell(clckdY, clckdX).getFigureColor();
-			}
+			if (chessBoard.figureInCell(clckdY, clckdX) != null) col2 = chessBoard.figureInCell(clckdY, clckdX).getFigureColor();
 
-			if (chessBoard.figureInCell(prevY, prevX).canMoveTo(clckdY, clckdX)) {
-				chessBoard.figureInCell(prevY, prevX).movingFigure(clckdY, clckdX);
-			}
+			if (chessBoard.figureInCell(prevY, prevX).canMoveTo(clckdY, clckdX)) chessBoard.figureInCell(prevY, prevX).movingFigure(clckdY, clckdX);
 
-			if (currentPlayer == BLACK && isKingInCheck(BLACK) || currentPlayer == WHITE && isKingInCheck(WHITE)) {
+			if (currentPlayer == BLACK && isKingInCheck(BLACK) || currentPlayer == WHITE && isKingInCheck(WHITE)) { //Проверка на шах
 				chessBoard.figureInCell(clckdY, clckdX).removeFigure();
-				addNewFigure(prevY, prevX, tempFig.toString(), col);
-				if (secTempFig != null) {
-					addNewFigure(clckdY, clckdX, secTempFig.toString(), col2);
-				}
+				chessBoard.addNewFigure(prevY, prevX, tempFig.toString(), col);
+				if (secTempFig != null) chessBoard.addNewFigure(clckdY, clckdX, secTempFig.toString(), col2);
+
 				cleanBoard();
 				isMoving = false;
 				return;
-			} else {
+			} else { //Если не было шаха
 				boardForRendering[clckdY][clckdX] = boardForRendering[prevY][prevX];
 				bt.setGraphic(previousButton.getGraphic());
 				previousButton.setGraphic(null);
 
 				if (boardForRendering[clckdY][clckdX] % 10 == 6) {
 					pawnToQueenCheck(clckdY, clckdX);
+					LinkedList<Figure> enemyFigures;
 					int offset;
 					if (currentPlayer == BLACK) {
+						enemyFigures = chessBoard.getWhiteFiguresList();
 						offset = -1;
-					} else offset = 1;
+					} else {
+						offset = 1;
+						enemyFigures = chessBoard.getBlackFiguresList();
+					}
 
-					if (Math.abs(clckdY - prevY) == 2 && isCellBrokenByPawn(currentPlayer, clckdY + offset, clckdX)) {
+					if (Math.abs(clckdY - prevY) == 2 && chessBoard.isCellBrokenByPawn(enemyFigures, clckdY + offset, clckdX, -offset)) { //Сохранение ячейки битого поля для взятия на проходе
 						yPawnBrokenCell = clckdY + offset;
 						xPawnBrokenCell = clckdX;
 					}
@@ -171,9 +145,8 @@ public class MainWindow extends Application {
 				}
 				boardForRendering[prevY][prevX] = 0;
 
-				if (boardForRendering[clckdY][clckdX] == 1 || boardForRendering[clckdY][clckdX] == 11){
-					isCastling(prevY, clckdX);
-				}
+				if (boardForRendering[clckdY][clckdX] == 1 || boardForRendering[clckdY][clckdX] == 11) isCastling(prevY, clckdX); //Реализация рокировки
+
 				isMoving = false;
 				cleanBoard();
 				changePlayer();
@@ -187,50 +160,10 @@ public class MainWindow extends Application {
 		previousButton = bt;
 	}
 
-	private void isCastling(int yKing, int xMove){
-		switch (yKing) {
-			case 0 -> {
-				if (xMove == 6){
-					boardForRendering[0][5] = boardForRendering[0][7];
-					boardForRendering[0][7] = 0;
-					chessBoard.figureInCell(0, 7).removeFigure();
-					addRook(BLACK, 0, 5);
-					buttons[0][5].setGraphic(new ImageView("resources/Rook0.png"));
-					buttons[0][7].setGraphic(null);
-				} else if (xMove == 2){
-					boardForRendering[0][3] = boardForRendering[0][0];
-					boardForRendering[0][0] = 0;
-					chessBoard.figureInCell(0, 0).removeFigure();
-					addRook(BLACK, 0, 3);
-					buttons[0][3].setGraphic(new ImageView("resources/Rook0.png"));
-					buttons[0][0].setGraphic(null);
-				}
-			}
-			case 7 -> {
-				if (xMove == 6){
-					boardForRendering[7][5] = boardForRendering[7][7];
-					boardForRendering[7][7] = 0;
-					chessBoard.figureInCell(7, 7).removeFigure();
-					addRook(WHITE, 7, 5);
-					buttons[7][5].setGraphic(new ImageView("resources/Rook1.png"));
-					buttons[7][7].setGraphic(null);
-				} else if (xMove == 2){
-					boardForRendering[7][3] = boardForRendering[7][0];
-					boardForRendering[7][0] = 0;
-					chessBoard.figureInCell(7, 0).removeFigure();
-					addRook(WHITE, 7, 3);
-					buttons[7][3].setGraphic(new ImageView("resources/Rook1.png"));
-					buttons[7][0].setGraphic(null);
-				}
-			}
-		}
-	}
-
 	private void freeMoveGraphic(int yPos, int xPos, int figure) {
 		int offset;
-		if (currentPlayer == WHITE) {
-			offset = -1;
-		} else offset = 1;
+		if (currentPlayer == WHITE) offset = -1;
+		else offset = 1;
 
 		switch (figure % 10) {
 			case 1 -> {
@@ -439,12 +372,40 @@ public class MainWindow extends Application {
 			if (currentPlayer == WHITE) {
 				boardForRendering[clckdY][clckdX] = 12;
 				buttons[clckdY][clckdX].setGraphic(new ImageView("Queen1.png"));
-				addQueen(WHITE, clckdY, clckdX);
 			} else {
 				boardForRendering[clckdY][clckdX] = 2;
 				buttons[clckdY][clckdX].setGraphic(new ImageView("Queen0.png"));
-				chessBoard.figureInCell(clckdY, clckdX).removeFigure();
-				addQueen(BLACK, clckdY, clckdX);
+			}
+		}
+	}
+
+	private void isCastling(int yKing, int xMove){
+		switch (yKing) {
+			case 0 -> {
+				if (xMove == 6){
+					boardForRendering[0][5] = boardForRendering[0][7];
+					boardForRendering[0][7] = 0;
+					buttons[0][5].setGraphic(new ImageView("Rook0.png"));
+					buttons[0][7].setGraphic(null);
+				} else if (xMove == 2){
+					boardForRendering[0][3] = boardForRendering[0][0];
+					boardForRendering[0][0] = 0;
+					buttons[0][3].setGraphic(new ImageView("Rook0.png"));
+					buttons[0][0].setGraphic(null);
+				}
+			}
+			case 7 -> {
+				if (xMove == 6) {
+					boardForRendering[7][5] = boardForRendering[7][7];
+					boardForRendering[7][7] = 0;
+					buttons[7][5].setGraphic(new ImageView("Rook1.png"));
+					buttons[7][7].setGraphic(null);
+				} else if (xMove == 2) {
+					boardForRendering[7][3] = boardForRendering[7][0];
+					boardForRendering[7][0] = 0;
+					buttons[7][3].setGraphic(new ImageView("Rook1.png"));
+					buttons[7][0].setGraphic(null);
+				}
 			}
 		}
 	}
@@ -455,9 +416,9 @@ public class MainWindow extends Application {
 		List<Figure> correctFiguresList;
 
 		if (color == BLACK) {
-			correctFiguresList = blackFiguresList;
+			correctFiguresList = chessBoard.getBlackFiguresList();
 		} else {
-			correctFiguresList = whiteFiguresList;
+			correctFiguresList = chessBoard.getWhiteFiguresList();
 		}
 		for (Figure currFigure: correctFiguresList) {
 			boolean move = currFigure.getIsMoved();
@@ -474,14 +435,14 @@ public class MainWindow extends Application {
 						if (!isKingInCheck(color)) {
 							currFigure.movingFigure(prevY, prevX);
 							if (tempFigure != null) {
-								addNewFigure(j, i, tempFigure.toString(), tempFigure.getFigureColor());
+								chessBoard.addNewFigure(j, i, tempFigure.toString(), tempFigure.getFigureColor());
 							}
 							currFigure.setIsMoved(move);
 							return false;
 						} else {
 							currFigure.movingFigure(prevY, prevX);
 							if (tempFigure != null) {
-								addNewFigure(j, i, tempFigure.toString(), tempFigure.getFigureColor());
+								chessBoard.addNewFigure(j, i, tempFigure.toString(), tempFigure.getFigureColor());
 							}
 						}
 					}
@@ -494,37 +455,18 @@ public class MainWindow extends Application {
 
 	private boolean isKingInCheck(int color) {
 		if (color == BLACK) {
-			return blackKing.isKingInCheck(whiteFiguresList);
+			return blackKing.isKingInCheck(chessBoard.getWhiteFiguresList());
 		} else {
-			return whiteKing.isKingInCheck(blackFiguresList);
+			return whiteKing.isKingInCheck(chessBoard.getBlackFiguresList());
 		}
-	}
-
-	private boolean isCellBrokenByPawn(int color, int yPos, int xPos) {
-		LinkedList<Figure> enemyFigures;
-		int offset;
-		if (color == BLACK) {
-			enemyFigures = whiteFiguresList;
-			offset = 1;
-		} else {
-			enemyFigures = blackFiguresList;
-			offset = -1;
-		}
-
-		for (Figure enemyFigure : enemyFigures) {
-			if (enemyFigure instanceof Pawn && enemyFigure.getY() == yPos + offset && (enemyFigure.getX() == xPos + 1 || enemyFigure.getX() == xPos - 1)){
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private boolean isCellBroken(int color, int yPos, int xPos) {
 		LinkedList<Figure> enemyFigures;
 		if (color == BLACK) {
-			enemyFigures = whiteFiguresList;
+			enemyFigures = chessBoard.getWhiteFiguresList();
 		} else {
-			enemyFigures = blackFiguresList;
+			enemyFigures = chessBoard.getBlackFiguresList();
 		}
 		for (Figure enemyFigure : enemyFigures) {
 			if (enemyFigure.canMoveTo(yPos, xPos)) {
@@ -534,68 +476,7 @@ public class MainWindow extends Application {
 		return true;
 	}
 
-	private void changePlayer() {
-		if (currentPlayer == WHITE) {
-			currentPlayer = BLACK;
-		} else currentPlayer = WHITE;
-	}
 
-	private void addNewFigure(int yPos, int xPos, String figure, int color) {
-		switch (figure) {
-			case "Pawn" -> addPawn(color, yPos, xPos);
-			case "Knight" -> addKnight(color, yPos, xPos);
-			case "Bishop" -> addBishop(color, yPos, xPos);
-			case "Queen" -> addQueen(color, yPos, xPos);
-			case "Rook" -> {
-				addRook(color, yPos, xPos);
-				chessBoard.figureInCell(yPos, xPos).setIsMoved(true);
-			}
-			case "King" -> {
-				if (color == 0) {
-					blackKing = new King(chessBoard, color, yPos, xPos);
-					figuresListAdd(blackKing, color);
-				} else {
-					whiteKing = new King(chessBoard, color, yPos, xPos);
-					figuresListAdd(whiteKing, color);
-				}
-			}
-		}
-	}
-
-	private void addQueen(int color, int y, int x){
-		Queen queen = new Queen(chessBoard, color, y, x);
-		figuresListAdd(queen, color);
-	}
-
-	private void addKnight(int color, int y, int x){
-		Knight knight = new Knight(chessBoard, color, y, x);
-		figuresListAdd(knight, color);
-	}
-
-	private void addRook(int color, int y, int x){
-		Rook rook = new Rook(chessBoard, color, y, x);
-		figuresListAdd(rook, color);
-	}
-
-	private void addBishop(int color, int y, int x){
-		Bishop bishop = new Bishop(chessBoard, color, y, x);
-		figuresListAdd(bishop, color);
-	}
-
-	private void addPawn(int color, int y, int x){
-		Pawn pawn = new Pawn(chessBoard, color, y, x);
-		figuresListAdd(pawn, color);
-	}
-
-	private void figuresListAdd(Figure piece, int color){
-		if (color == BLACK) {
-			blackFiguresList.add(piece);
-		} else whiteFiguresList.add(piece);
-	}
-
-	public static void main(String[] args) {
-		launch(args);
-	}
 
 	private void showWinner() {
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -606,5 +487,15 @@ public class MainWindow extends Application {
 			alert.setContentText("Шах и мат, белый!\nЧерный тебя обыграл!");
 		} else alert.setContentText("Шах и мат, черный!\nБелый тебя обыграл!");
 		alert.showAndWait();
+	}
+
+	private void changePlayer() {
+		if (currentPlayer == WHITE) {
+			currentPlayer = BLACK;
+		} else currentPlayer = WHITE;
+	}
+
+	public static void main(String[] args) {
+		launch(args);
 	}
 }

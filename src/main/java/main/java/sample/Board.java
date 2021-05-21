@@ -1,7 +1,15 @@
 package main.java.sample;
 
+import java.util.LinkedList;
+
 public class Board {
+	public static final int BLACK = 0;
+	public static final int WHITE = 1;
 	private final Figure[][] board;
+	private LinkedList<Figure> blackFiguresList;
+	private LinkedList<Figure> whiteFiguresList;
+	private King blackKing;
+	private King whiteKing;
 	
 	public Board() {
 		board = new Figure[8][8];
@@ -26,7 +34,111 @@ public class Board {
 			board[yPos][xPos] = chessPiece;
 			chessPiece.setY(yPos);
 			chessPiece.setX(xPos);
-		} else throw new IllegalArgumentException("Указанная позиция находится вне доски");
+		}
+	}
+
+	public boolean isCellBrokenByPawn(LinkedList<Figure> enemyFigures, int yPos, int xPos, int offset) {
+		for (Figure enemyFigure : enemyFigures) {
+			if (enemyFigure instanceof Pawn && enemyFigure.getY() == yPos + offset && (enemyFigure.getX() == xPos + 1 || enemyFigure.getX() == xPos - 1)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void addNewFigure(int yPos, int xPos, String figure, int color) {
+		switch (figure) {
+			case "Pawn" -> addPawn(color, yPos, xPos);
+			case "Knight" -> addKnight(color, yPos, xPos);
+			case "Bishop" -> addBishop(color, yPos, xPos);
+			case "Queen" -> addQueen(color, yPos, xPos);
+			case "Rook" -> {
+				addRook(color, yPos, xPos);
+				this.figureInCell(yPos, xPos).setIsMoved(true);
+			}
+			case "King" -> {
+				if (color == 0) {
+					blackKing = new King(this, color, yPos, xPos);
+					figuresListAdd(blackKing, color);
+				} else {
+					whiteKing = new King(this, color, yPos, xPos);
+					figuresListAdd(whiteKing, color);
+				}
+			}
+		}
+	}
+
+	private void addQueen(int color, int y, int x){
+		Queen queen = new Queen(this, color, y, x);
+		figuresListAdd(queen, color);
+	}
+
+	private void addKnight(int color, int y, int x){
+		Knight knight = new Knight(this, color, y, x);
+		figuresListAdd(knight, color);
+	}
+
+	private void addRook(int color, int y, int x){
+		Rook rook = new Rook(this, color, y, x);
+		figuresListAdd(rook, color);
+	}
+
+	private void addBishop(int color, int y, int x){
+		Bishop bishop = new Bishop(this, color, y, x);
+		figuresListAdd(bishop, color);
+	}
+
+	private void addPawn(int color, int y, int x){
+		Pawn pawn = new Pawn(this, color, y, x);
+		figuresListAdd(pawn, color);
+	}
+
+	private void figuresListAdd(Figure piece, int color){
+		if (color == BLACK) blackFiguresList.add(piece);
+		else whiteFiguresList.add(piece);
+	}
+
+	public LinkedList<Figure> getBlackFiguresList(){
+		return blackFiguresList;
+	}
+
+	public LinkedList<Figure> getWhiteFiguresList(){
+		return whiteFiguresList;
+	}
+
+	public King getBlackKing(){
+		return blackKing;
+	}
+
+	public King getWhiteKing(){
+		return whiteKing;
+	}
+
+	public void initBoard(){
+		blackKing = new King(this, BLACK, 0, 4);
+		whiteKing = new King(this, WHITE, 7, 4);
+		blackFiguresList = new LinkedList<>();
+		whiteFiguresList = new LinkedList<>();
+		blackFiguresList.add(blackKing);
+		whiteFiguresList.add(whiteKing);
+		addQueen(BLACK, 0, 3);
+		addQueen(WHITE, 7, 3);
+		addBishop(BLACK, 0, 2);
+		addBishop(WHITE, 7, 2);
+		addBishop(BLACK, 0, 5);
+		addBishop(WHITE, 7, 5);
+		addKnight(BLACK, 0, 1);
+		addKnight(WHITE, 7, 1);
+		addKnight(BLACK, 0, 6);
+		addKnight(WHITE, 7, 6);
+		addRook(BLACK, 0, 0);
+		addRook(BLACK, 0, 7);
+		addRook(WHITE, 7, 0);
+		addRook(WHITE, 7, 7);
+		for (int x = 0; x < 8; x++){
+			addPawn(BLACK, 1, x);
+			addPawn(WHITE, 6, x);
+		}
 	}
 
 	public void printBoard() {
