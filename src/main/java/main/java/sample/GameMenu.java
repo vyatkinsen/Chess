@@ -35,7 +35,7 @@ public class GameMenu extends Application {
 		newGame.setStyle("-fx-background-color: white");
 		exitGame.setStyle("-fx-background-color: white");
 
-		newGame.setOnMouseClicked(event -> new main.java.sample.MainWindow().start(primaryStage));
+		newGame.setOnMouseClicked(event -> new MainWindow( new Pane(), 800, 800).start(primaryStage));
 		exitGame.setOnMouseClicked(event -> System.exit(0));
 
 		root.getChildren().addAll(img, newGame, exitGame);

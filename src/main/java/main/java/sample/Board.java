@@ -6,12 +6,15 @@ import java.util.List;
 public class Board {
 	public static final int BLACK = 0;
 	public static final int WHITE = 1;
+	private int yPawnBrokenCell = -1;
+	private int xPawnBrokenCell = -1;
 	private final Figure[][] board;
 	private LinkedList<Figure> blackFiguresList;
 	private LinkedList<Figure> whiteFiguresList;
 	private King blackKing;
 	private King whiteKing;
-	
+	public boolean check;
+
 	public Board() {
 		board = new Figure[8][8];
 	}
@@ -38,7 +41,16 @@ public class Board {
 		}
 	}
 
-	public boolean isCellBrokenByPawn(LinkedList<Figure> enemyFigures, int yPos, int xPos, int offset) {
+	public boolean isCellBrokenByPawn(int yPos, int xPos, int currentPlayer) {
+		LinkedList<Figure> enemyFigures;
+		int offset;
+		if (currentPlayer == BLACK) {
+			enemyFigures = this.getWhiteFiguresList();
+			offset = 1;
+		} else {
+			offset = -1;
+			enemyFigures = this.getBlackFiguresList();
+		}
 		for (Figure enemyFigure : enemyFigures) {
 			if (enemyFigure instanceof Pawn && enemyFigure.getY() == yPos + offset && (enemyFigure.getX() == xPos + 1 || enemyFigure.getX() == xPos - 1)){
 				return true;
@@ -47,17 +59,17 @@ public class Board {
 		return false;
 	}
 
-	public void addNewFigure(int yPos, int xPos, String figure, int color) {
-		switch (figure) {
-			case "Pawn" -> addPawn(color, yPos, xPos);
-			case "Knight" -> addKnight(color, yPos, xPos);
-			case "Bishop" -> addBishop(color, yPos, xPos);
-			case "Queen" -> addQueen(color, yPos, xPos);
-			case "Rook" -> {
+	public void addNewFigure(int yPos, int xPos, FigureType type, int color) {
+		switch (type) {
+			case PAWN -> addPawn(color, yPos, xPos);
+			case KNIGHT -> addKnight(color, yPos, xPos);
+			case BISHOP -> addBishop(color, yPos, xPos);
+			case QUEEN -> addQueen(color, yPos, xPos);
+			case ROOK -> {
 				addRook(color, yPos, xPos);
 				this.figureInCell(yPos, xPos).setIsMoved(true);
 			}
-			case "King" -> {
+			case KING -> {
 				if (color == 0) {
 					blackKing = new King(this, color, yPos, xPos);
 					figuresListAdd(blackKing, color);
@@ -69,7 +81,7 @@ public class Board {
 		}
 	}
 
-	private void addQueen(int color, int y, int x){
+	public void addQueen(int color, int y, int x){
 		Queen queen = new Queen(this, color, y, x);
 		figuresListAdd(queen, color);
 	}
@@ -99,22 +111,6 @@ public class Board {
 		else whiteFiguresList.add(piece);
 	}
 
-	public LinkedList<Figure> getBlackFiguresList(){
-		return blackFiguresList;
-	}
-
-	public LinkedList<Figure> getWhiteFiguresList(){
-		return whiteFiguresList;
-	}
-
-	public King getBlackKing(){
-		return blackKing;
-	}
-
-	public King getWhiteKing(){
-		return whiteKing;
-	}
-
 	public boolean noMovesLeft(int color) {
 		int prevY, prevX;
 		Figure tempFigure;
@@ -140,14 +136,14 @@ public class Board {
 						if (!isKingInCheck(color)) {
 							currFigure.movingFigure(prevY, prevX);
 							if (tempFigure != null) {
-								this.addNewFigure(j, i, tempFigure.toString(), tempFigure.getFigureColor());
+								this.addNewFigure(j, i, tempFigure.getType(), tempFigure.getFigureColor());
 							}
 							currFigure.setIsMoved(move);
 							return false;
 						} else {
 							currFigure.movingFigure(prevY, prevX);
 							if (tempFigure != null) {
-								this.addNewFigure(j, i, tempFigure.toString(), tempFigure.getFigureColor());
+								this.addNewFigure(j, i, tempFigure.getType(), tempFigure.getFigureColor());
 							}
 						}
 					}
@@ -159,11 +155,13 @@ public class Board {
 	}
 
 	public boolean isKingInCheck(int color) {
-		if (color == BLACK) {
-			return blackKing.isKingInCheck(this.getWhiteFiguresList());
-		} else {
-			return whiteKing.isKingInCheck(this.getBlackFiguresList());
-		}
+		if (blackKing != null && whiteKing != null) {
+			if (color == BLACK) {
+				return blackKing.isKingInCheck(this.getWhiteFiguresList());
+			} else {
+				return whiteKing.isKingInCheck(this.getBlackFiguresList());
+			}
+		} return false;
 	}
 
 	public boolean isCellBroken(int color, int yPos, int xPos) {
@@ -208,6 +206,41 @@ public class Board {
 		}
 	}
 
+	public LinkedList<Figure> getBlackFiguresList(){
+		return blackFiguresList;
+	}
+
+	public LinkedList<Figure> getWhiteFiguresList(){
+		return whiteFiguresList;
+	}
+
+	public King getBlackKing(){
+		return blackKing;
+	}
+
+	public King getWhiteKing(){
+		return whiteKing;
+	}
+
+	public boolean getCheck(){
+		return check;
+	}
+
+	public int getxPawnBrokenCell() {
+		return xPawnBrokenCell;
+	}
+
+	public int getyPawnBrokenCell() {
+		return yPawnBrokenCell;
+	}
+
+	public void setxPawnBrokenCell(int xPawnBrokenCell) {
+		this.xPawnBrokenCell = xPawnBrokenCell;
+	}
+
+	public void setyPawnBrokenCell(int yPawnBrokenCell) {
+		this.yPawnBrokenCell = yPawnBrokenCell;
+	}
 
 	public void printBoard() {
 		for (int y = 0; y < 8; y++) {

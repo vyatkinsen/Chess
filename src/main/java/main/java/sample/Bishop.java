@@ -3,6 +3,7 @@ package main.java.sample;
 public class Bishop extends Figure {
 	public Bishop(Board board, int color, int y, int x){
 		super(board, color, y, x);
+		type = FigureType.BISHOP;
 	}
 
 	@Override

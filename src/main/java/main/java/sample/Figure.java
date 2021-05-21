@@ -1,5 +1,11 @@
 package main.java.sample;
+import javafx.scene.image.ImageView;
+
 import static java.lang.Math.abs;
+
+enum FigureType{
+	ROOK, KNIGHT, BISHOP, QUEEN, KING, PAWN
+}
 
 public abstract class Figure {
 	private int y;
@@ -7,7 +13,7 @@ public abstract class Figure {
 	private final int color;
 	protected Board board;
 	protected boolean isMoved;
-	public boolean canBrokeCell;
+	public FigureType type;
 
 	public Figure(Board board, int color, int y, int x) {
 		this.board = board;
@@ -38,17 +44,52 @@ public abstract class Figure {
 	}
 
 	public void movingFigure(int yPos, int xPos) {
-		if (board.figureInCell(y, x) == this) {
-			board.removeFromBoard(this);
+		board.check = false;
+		int offset;
+		if (color == 0) offset = -1;
+		else offset = 1;
+
+		if (Math.abs(yPos - y) == 2 && board.isCellBrokenByPawn(yPos + offset, xPos, -offset)) { //Сохранение ячейки битого поля для взятия на проходе
+			board.setyPawnBrokenCell(yPos + offset);
+			board.setxPawnBrokenCell(xPos);
 		}
+		int col = -1;
+		int col2 = -1;
+		int prevY = y;
+		int prevX = x;
+		Figure tempFig = this;
+		Figure secTempFig = board.figureInCell(yPos, xPos);
+
+		if (board.figureInCell(y, x) != null) col = color;
+
+		if (board.figureInCell(yPos, xPos) != null) col2 = board.figureInCell(yPos, xPos).getFigureColor();
+
+		if (board.figureInCell(y, x) == this) board.removeFromBoard(this);
+
 		this.y = yPos;
 		this.x = xPos;
 
-		if (board.figureInCell(yPos, xPos) != null) {
-			board.figureInCell(yPos, xPos).removeFigure();
-		}
+		if (board.figureInCell(yPos, xPos) != null) board.figureInCell(yPos, xPos).removeFigure();
 
 		board.setFigureOnBoard(this, y, x);
+
+		if (type == FigureType.PAWN && board.figureInCell(yPos + offset, xPos) != null && board.figureInCell(yPos + offset, xPos).getFigureColor() != col && xPos == board.getxPawnBrokenCell() && yPos == board.getyPawnBrokenCell()) {
+			if (board.figureInCell(yPos + offset, xPos).getType() == FigureType.PAWN) {
+				board.figureInCell(yPos + offset, xPos).removeFigure();
+			}
+		}
+
+		if (type == FigureType.PAWN && (yPos == 0 && color == 1 || yPos == 7 && color == 0)){ //pawnToQueenCheck
+			if (color == 1) board.addNewFigure(0, xPos, FigureType.QUEEN, 1);
+			else board.addNewFigure(7, xPos, FigureType.QUEEN, 0);
+		}
+
+		if (col == 0 && board.isKingInCheck(0) || col == 1 && board.isKingInCheck(1)) {
+			board.figureInCell(yPos, xPos).removeFigure();
+			board.addNewFigure(prevY, prevX, tempFig.getType(), col);
+			if (secTempFig != null) board.addNewFigure(yPos, xPos, secTempFig.getType(), col2);
+			board.check = true;
+		}
 		isMoved = true;
 	}
 
@@ -65,12 +106,16 @@ public abstract class Figure {
 		return x;
 	}
 
-	protected void setX(int x) {
+	public void setX(int x) {
 		this.x = x;
 	}
 
-	protected void setY(int y) {
+	public void setY(int y) {
 		this.y = y;
+	}
+
+	public FigureType getType() {
+		return type;
 	}
 
 	public int getFigureColor() {
@@ -141,9 +186,5 @@ public abstract class Figure {
 				x += colOffset;
 			} return true;
 		} else return false;
-	}
-
-	public void setBrokeCell(Boolean can) {
-		canBrokeCell = can;
 	}
 }

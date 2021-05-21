@@ -3,6 +3,7 @@ package main.java.sample;
 public class Rook extends Figure {
 	public Rook(Board board, int color, int y, int x) {
 		super(board, color, y, x);
+		type = FigureType.ROOK;
 	}
 
 	@Override
