@@ -111,12 +111,13 @@ public class MainWindow extends Scene {
 				cleanBoard();
 				changePlayer();
 			}
+			if (chessBoard.noMovesLeft(currentPlayer)){
+			cleanBoard();
+			enableButtons();
+			showWinner(); }
+
 		}
-//		if (chessBoard.noMovesLeft(currentPlayer)) {
-//			cleanBoard();
-//			enableButtons();
-//			showWinner();
-//		}
+		chessBoard.printBoard();
 		previousButton = bt;
 	}
 
@@ -175,7 +176,7 @@ public class MainWindow extends Scene {
 					buttons[yPos - 2][xPos].setStyle("-fx-background-color: yellow");
 					buttons[yPos - 2][xPos].setDisable(false);
 				}
-				if (chessBoard.figureInCell(yPos + offset, xPos) == null) {
+				if (chessBoard.insideBoard(yPos + offset, xPos) && chessBoard.figureInCell(yPos + offset, xPos) == null) {
 					buttons[yPos + offset][xPos].setStyle("-fx-background-color: yellow");
 					buttons[yPos + offset][xPos].setDisable(false);
 				}

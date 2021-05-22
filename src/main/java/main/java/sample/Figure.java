@@ -15,6 +15,7 @@ public abstract class Figure {
 	protected boolean isMoved;
 	public FigureType type;
 
+
 	public Figure(Board board, int color, int y, int x) {
 		this.board = board;
 		this.color = color;
@@ -45,21 +46,49 @@ public abstract class Figure {
 
 	public void movingFigure(int yPos, int xPos) {
 		board.setIsCheck(false);
+
 		int offset;
 		if (color == 0) offset = -1;
 		else offset = 1;
+		Figure tempFig = this;
 
 		if (Math.abs(yPos - y) == 2 && board.isCellBrokenByPawn(yPos + offset, xPos, -offset)) { //Сохранение ячейки битого поля для взятия на проходе
 			board.setyPawnBrokenCell(yPos + offset);
 			board.setxPawnBrokenCell(xPos);
 			board.setColorOfPawnBrokenCell(color);
 		}
+
+		if (type == FigureType.PAWN && (yPos == board.getyPawnBrokenCell() && xPos == board.getxPawnBrokenCell() && this.getFigureColor() != board.getColorOfPawnBrokenCell())){
+			board.setxPawnBrokenCell(-1);
+			board.setyPawnBrokenCell(-1);
+			board.setColorOfPawnBrokenCell(-1);
+		}
+
+		if (type == FigureType.PAWN && ((yPos == 0 && color == 1) || (yPos == 7 && color == 0))){ //pawnToQueenCheck
+			if (color == 1) {
+				board.addNewFigure(0, xPos, FigureType.QUEEN, 1);
+				tempFig = board.figureInCell(0, xPos);
+			}
+			else {
+				board.addNewFigure(7, xPos, FigureType.QUEEN, 0);
+				tempFig = board.figureInCell(7, xPos);
+			}
+		}
+
 		int col = -1;
 		int col2 = -1;
 		int prevY = y;
 		int prevX = x;
-		Figure tempFig = this;
+
 		Figure secTempFig = board.figureInCell(yPos, xPos);
+
+		if (type == FigureType.PAWN && board.figureInCell(yPos + offset, xPos) != null &&
+				board.figureInCell(yPos + offset, xPos).getFigureColor() != col &&
+				xPos == board.getxPawnBrokenCell() && yPos == board.getyPawnBrokenCell() && color != board.getColorOfPawnBrokenCell()) {
+			if (board.figureInCell(yPos + offset, xPos).getType() == FigureType.PAWN) {
+				board.figureInCell(yPos + offset, xPos).removeFigure();
+			}
+		}
 
 		if (board.figureInCell(y, x) != null) col = color;
 
@@ -70,28 +99,10 @@ public abstract class Figure {
 		this.y = yPos;
 		this.x = xPos;
 
-		if (board.figureInCell(yPos, xPos) != null) board.figureInCell(yPos, xPos).removeFigure();
+		if (board.figureInCell(yPos, xPos) != null) { board.figureInCell(yPos, xPos).removeFigure(); }
 
-		board.setFigureOnBoard(this, y, x);
+		board.setFigureOnBoard(tempFig, y, x);
 
-		if (type == FigureType.PAWN && board.figureInCell(yPos + offset, xPos) != null &&
-				board.figureInCell(yPos + offset, xPos).getFigureColor() != col &&
-				xPos == board.getxPawnBrokenCell() && yPos == board.getyPawnBrokenCell() && color != board.getColorOfPawnBrokenCell()) {
-			if (board.figureInCell(yPos + offset, xPos).getType() == FigureType.PAWN) {
-				board.figureInCell(yPos + offset, xPos).removeFigure();
-			}
-		}
-
-		if (type == FigureType.PAWN && (yPos == board.getyPawnBrokenCell() && xPos == board.getxPawnBrokenCell() && this.getFigureColor() != board.getColorOfPawnBrokenCell())){
-			board.setxPawnBrokenCell(-1);
-			board.setyPawnBrokenCell(-1);
-			board.setColorOfPawnBrokenCell(-1);
-		}
-
-		if (type == FigureType.PAWN && (yPos == 0 && color == 1 || yPos == 7 && color == 0)){ //pawnToQueenCheck
-			if (color == 1) board.addNewFigure(0, xPos, FigureType.QUEEN, 1);
-			else board.addNewFigure(7, xPos, FigureType.QUEEN, 0);
-		}
 		if (color == 0 && board.isKingInCheck(0) || color == 1 && board.isKingInCheck(1)) {
 			board.figureInCell(yPos, xPos).removeFigure();
 			board.addNewFigure(prevY, prevX, tempFig.getType(), col);
@@ -101,7 +112,16 @@ public abstract class Figure {
 		isMoved = true;
 	}
 
-	public void removeFigure() {
+	public void moveWithoutCheck(int yPos, int xPos) {
+		Figure tempFig = this;
+		if (board.figureInCell(y, x) == this) board.removeFromBoard(this);
+		this.y = yPos;
+		this.x = xPos;
+		if (board.figureInCell(yPos, xPos) != null) board.figureInCell(yPos, xPos).removeFigure();
+		board.setFigureOnBoard(tempFig, y, x);
+	}
+
+		public void removeFigure() {
 		board.removeFromBoard(this);
 		y = x = -1;
 	}

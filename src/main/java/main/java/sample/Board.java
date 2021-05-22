@@ -1,7 +1,5 @@
 package main.java.sample;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,6 +16,7 @@ public class Board {
 	private King whiteKing;
 	private boolean check;
 
+
 	public Board() {
 		board = new Figure[8][8];
 	}
@@ -27,17 +26,18 @@ public class Board {
 	}
 
 	public Figure figureInCell(int yPos, int xPos){
-		if (insideBoard(yPos, xPos)) {
-			return board[yPos][xPos];
-		} else return null;
+		if (insideBoard(yPos, xPos)) return board[yPos][xPos];
+		else return null;
 	}
 
 	public void removeFromBoard(Figure removePiece) {
-		board[removePiece.getY()][removePiece.getX()] = null;
+		if (insideBoard(removePiece.getY(), removePiece.getX())) {
+			board[removePiece.getY()][removePiece.getX()] = null;
+		}
 	}
 
 	public void setFigureOnBoard(Figure chessPiece, int yPos, int xPos) {
-		if (insideBoard(yPos, xPos) && chessPiece != null) {
+		if (insideBoard(yPos, xPos)) {
 			board[yPos][xPos] = chessPiece;
 			chessPiece.setY(yPos);
 			chessPiece.setX(xPos);
@@ -84,6 +84,58 @@ public class Board {
 		}
 	}
 
+	public boolean noMovesLeft(int color) {
+		int prevY, prevX;
+		Figure tempFigure;
+		List<Figure> correctFiguresList;
+		if (color == BLACK) correctFiguresList = new LinkedList<>(blackFiguresList);
+		else correctFiguresList = new LinkedList<>(whiteFiguresList);
+
+		for (Figure currFigure: correctFiguresList) {
+			boolean move = currFigure.getIsMoved();
+			for (int j = 0; j < 8; j++) {
+				for (int i = 0; i < 8; i++) {
+					if (currFigure.canMoveTo(j, i)) {
+						tempFigure = this.figureInCell(j, i);
+						prevY = currFigure.getY();
+						prevX = currFigure.getX();
+
+						currFigure.moveWithoutCheck(j, i);
+
+						if (!isKingInCheck(color)) {
+							currFigure.moveWithoutCheck(prevY, prevX);
+							if (tempFigure != null) {
+								this.addNewFigure(j, i, tempFigure.getType(), tempFigure.getFigureColor());
+							}
+							currFigure.setIsMoved(move);
+							if (currFigure.getType() == FigureType.KING){
+								if (Math.abs(prevX - i) == 2 && Math.abs(prevY - j) == 0 && !move) {
+									switch (prevY) {
+										case 0 -> {
+											if (i == 6) this.addNewFigure(0, 7, FigureType.ROOK, 0);
+											else if (i == 2) this.addNewFigure(0, 0, FigureType.ROOK, 0);
+										}
+										case 7 -> {
+											if (i == 6) this.addNewFigure(7, 7, FigureType.ROOK, 1);
+											else if (i == 2) this.addNewFigure(7, 0, FigureType.ROOK, 1);
+										}
+									}
+								}
+							}
+
+							return false;
+						} else {
+							System.out.println("NO MOVE");
+							currFigure.moveWithoutCheck(prevY, prevX);
+							if (tempFigure != null) this.addNewFigure(j, i, tempFigure.getType(), tempFigure.getFigureColor());
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+
 	public void addQueen(int color, int y, int x){
 		Queen queen = new Queen(this, color, y, x);
 		figuresListAdd(queen, color);
@@ -110,53 +162,10 @@ public class Board {
 	}
 
 	private void figuresListAdd(Figure piece, int color){
+		System.out.println(piece);
 		if (color == BLACK) blackFiguresList.add(piece);
 		else whiteFiguresList.add(piece);
 	}
-
-	public boolean noMovesLeft(int color) {
-		int prevY, prevX;
-		Figure tempFigure;
-		List<Figure> correctFiguresList;
-
-		if (color == BLACK) {
-			correctFiguresList = this.getBlackFiguresList();
-		} else {
-			correctFiguresList = this.getWhiteFiguresList();
-		}
-		for (Figure currFigure: correctFiguresList) {
-			boolean move = currFigure.getIsMoved();
-			for (int i = 0; i < 8; i++) {
-				for (int j = 0; j < 8; j++) {
-
-					if (currFigure.canMoveTo(j, i)) {
-						tempFigure = this.figureInCell(j, i);
-						prevY = currFigure.getY();
-						prevX = currFigure.getX();
-
-						currFigure.movingFigure(j, i);
-
-						if (!isKingInCheck(color)) {
-							currFigure.movingFigure(prevY, prevX);
-							if (tempFigure != null) {
-								this.addNewFigure(j, i, tempFigure.getType(), tempFigure.getFigureColor());
-							}
-							currFigure.setIsMoved(move);
-							return false;
-						} else {
-							currFigure.movingFigure(prevY, prevX);
-							if (tempFigure != null) {
-								this.addNewFigure(j, i, tempFigure.getType(), tempFigure.getFigureColor());
-							}
-						}
-					}
-				}
-			}
-			currFigure.setIsMoved(move);
-		}
-		return true;
-	}
-
 
 	public boolean isKingInCheck(int color) {
 		if (blackKing != null && whiteKing != null) {

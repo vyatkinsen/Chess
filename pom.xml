@@ -22,7 +22,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>DuLauncher</mainClass>
+                            <mainClass>GameMenu</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
