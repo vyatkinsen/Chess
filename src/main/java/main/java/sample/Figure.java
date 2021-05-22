@@ -58,11 +58,7 @@ public abstract class Figure {
 			board.setColorOfPawnBrokenCell(color);
 		}
 
-		if (type == FigureType.PAWN && (yPos == board.getyPawnBrokenCell() && xPos == board.getxPawnBrokenCell() && this.getFigureColor() != board.getColorOfPawnBrokenCell())){
-			board.setxPawnBrokenCell(-1);
-			board.setyPawnBrokenCell(-1);
-			board.setColorOfPawnBrokenCell(-1);
-		}
+
 
 		if (type == FigureType.PAWN && ((yPos == 0 && color == 1) || (yPos == 7 && color == 0))){ //pawnToQueenCheck
 			if (color == 1) {
@@ -79,18 +75,20 @@ public abstract class Figure {
 		int col2 = -1;
 		int prevY = y;
 		int prevX = x;
+		if (board.figureInCell(y, x) != null) col = color;
 
 		Figure secTempFig = board.figureInCell(yPos, xPos);
 
 		if (type == FigureType.PAWN && board.figureInCell(yPos + offset, xPos) != null &&
-				board.figureInCell(yPos + offset, xPos).getFigureColor() != col &&
+				board.figureInCell(yPos + offset, xPos).getFigureColor() != color &&
 				xPos == board.getxPawnBrokenCell() && yPos == board.getyPawnBrokenCell() && color != board.getColorOfPawnBrokenCell()) {
-			if (board.figureInCell(yPos + offset, xPos).getType() == FigureType.PAWN) {
-				board.figureInCell(yPos + offset, xPos).removeFigure();
-			}
+			if (board.figureInCell(yPos + offset, xPos).getType() == FigureType.PAWN) board.figureInCell(yPos + offset, xPos).removeFigure();
 		}
-
-		if (board.figureInCell(y, x) != null) col = color;
+		if (type == FigureType.PAWN && (yPos == board.getyPawnBrokenCell() && xPos == board.getxPawnBrokenCell() && this.getFigureColor() != board.getColorOfPawnBrokenCell())){
+			board.setxPawnBrokenCell(-1);
+			board.setyPawnBrokenCell(-1);
+			board.setColorOfPawnBrokenCell(-1);
+		}
 
 		if (board.figureInCell(yPos, xPos) != null) col2 = board.figureInCell(yPos, xPos).getFigureColor();
 

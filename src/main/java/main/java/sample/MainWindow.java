@@ -111,10 +111,10 @@ public class MainWindow extends Scene {
 				cleanBoard();
 				changePlayer();
 			}
-			if (chessBoard.noMovesLeft(currentPlayer)){
-			cleanBoard();
-			enableButtons();
-			showWinner(); }
+//			if (chessBoard.noMovesLeft(currentPlayer)){
+//			cleanBoard();
+//			enableButtons();
+//			showWinner(); }
 
 		}
 		chessBoard.printBoard();
