@@ -1,5 +1,4 @@
 package main.java.sample;
-import javafx.scene.image.ImageView;
 
 import static java.lang.Math.abs;
 
@@ -14,7 +13,7 @@ public abstract class Figure {
 	protected Board board;
 	protected boolean isMoved;
 	public FigureType type;
-
+	private boolean isCastling;
 
 	public Figure(Board board, int color, int y, int x) {
 		this.board = board;
@@ -52,15 +51,13 @@ public abstract class Figure {
 		else offset = 1;
 		Figure tempFig = this;
 
-		if (Math.abs(yPos - y) == 2 && board.isCellBrokenByPawn(yPos + offset, xPos, -offset)) { //Сохранение ячейки битого поля для взятия на проходе
+		if (Math.abs(yPos - y) == 2 && board.isCellBrokenByPawn(yPos + offset, xPos, -offset)) {
 			board.setyPawnBrokenCell(yPos + offset);
 			board.setxPawnBrokenCell(xPos);
 			board.setColorOfPawnBrokenCell(color);
 		}
 
-
-
-		if (type == FigureType.PAWN && ((yPos == 0 && color == 1) || (yPos == 7 && color == 0))){ //pawnToQueenCheck
+		if (type == FigureType.PAWN && ((yPos == 0 && color == 1) || (yPos == 7 && color == 0))){
 			if (color == 1) {
 				board.addNewFigure(0, xPos, FigureType.QUEEN, 1);
 				tempFig = board.figureInCell(0, xPos);
@@ -92,13 +89,46 @@ public abstract class Figure {
 
 		if (board.figureInCell(yPos, xPos) != null) col2 = board.figureInCell(yPos, xPos).getFigureColor();
 
+		if (type == FigureType.KING) {
+			switch (prevY) {
+				case 0 -> {
+					if (xPos == 6 && board.figureInCell(yPos, 7) != null && !board.figureInCell(yPos, 7).getIsMoved() &&
+							board.figureInCell(0, 5) == null &&	board.figureInCell(0, 6) == null &&
+							!isCastling && board.figureInCell(0, 7) != null && board.figureInCell(0, 7).getType() == FigureType.ROOK &&
+							!board.figureInCell(0, 7).getIsMoved() && board.isCellNotBroken(0, 0, 5)) {
+						board.removeFromBoard(board.figureInCell(0, 7));
+						board.addNewFigure(0, 5, FigureType.ROOK, 0);
+					} else if (xPos == 2 && board.figureInCell(0, 1) == null &&	board.figureInCell(0, 3) == null && !isCastling &&
+							board.figureInCell(0, 0) != null && board.figureInCell(0, 0).getType() == FigureType.ROOK &&
+							!board.figureInCell(0, 0).getIsMoved() && board.isCellNotBroken(0, 0, 3)) {
+						board.removeFromBoard(board.figureInCell(0, 7));
+						board.addNewFigure(0, 3, FigureType.ROOK, 0);
+					}
+				}
+				case 7 -> {
+					if (xPos == 6 && board.figureInCell(yPos, 7) != null && !board.figureInCell(yPos, 7).getIsMoved() &&
+							board.figureInCell(7, 5) == null &&	board.figureInCell(7, 6) == null &&
+							!isCastling && board.figureInCell(7, 7) != null && board.figureInCell(7, 7).getType() == FigureType.ROOK &&
+							!board.figureInCell(7, 7).getIsMoved() && board.isCellNotBroken(1, 7, 5)) {
+						board.removeFromBoard(board.figureInCell(7, 7));
+						board.addNewFigure(7, 5, FigureType.ROOK, 1);
+					} else if (xPos == 2 && board.figureInCell(7, 1) == null &&	board.figureInCell(7, 3) == null && !isCastling &&
+							board.figureInCell(7, 0) != null &&	board.figureInCell(7, 0).getType() == FigureType.ROOK &&
+							!board.figureInCell(7, 0).getIsMoved() && board.isCellNotBroken(1, 7, 3)) {
+						board.removeFromBoard(board.figureInCell(7, 0));
+						board.addNewFigure(7, 3, FigureType.ROOK, 1);
+					}
+				}
+			}
+			isCastling = true;
+		}
+
 		if (board.figureInCell(y, x) == this) board.removeFromBoard(this);
 
 		this.y = yPos;
 		this.x = xPos;
 
-		if (board.figureInCell(yPos, xPos) != null) { board.figureInCell(yPos, xPos).removeFigure(); }
-
+		if (board.figureInCell(yPos, xPos) != null) board.figureInCell(yPos, xPos).removeFigure();
 		board.setFigureOnBoard(tempFig, y, x);
 
 		if (color == 0 && board.isKingInCheck(0) || color == 1 && board.isKingInCheck(1)) {
@@ -119,7 +149,7 @@ public abstract class Figure {
 		board.setFigureOnBoard(tempFig, y, x);
 	}
 
-		public void removeFigure() {
+	public void removeFigure() {
 		board.removeFromBoard(this);
 		y = x = -1;
 	}
@@ -138,6 +168,14 @@ public abstract class Figure {
 
 	public void setY(int y) {
 		this.y = y;
+	}
+
+	public boolean getIsCastling() {
+		return isCastling;
+	}
+
+	public void setIsCastling(boolean isCastling) {
+		this.isCastling = isCastling;
 	}
 
 	public FigureType getType() {

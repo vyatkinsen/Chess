@@ -50,15 +50,10 @@ public class MainWindow extends Scene {
 				cell.setMinWidth(100);
 				cell.setLayoutX(i * 100);
 				cell.setLayoutY(j * 100);
-				if (chessBoard.figureInCell(j, i) != null) {
-					cell.setGraphic(new ImageView("" + chessBoard.figureInCell(j, i) + chessBoard.figureInCell(j, i).getFigureColor() + ".png"));
-				}
+				if (chessBoard.figureInCell(j, i) != null) cell.setGraphic(new ImageView("" + chessBoard.figureInCell(j, i) + chessBoard.figureInCell(j, i).getFigureColor() + ".png"));
 
-				if ((i + j) % 2 == 0) {
-					cell.setStyle("-fx-background-color: white");
-				} else {
-					cell.setStyle("-fx-background-color: grey");
-				}
+				if ((i + j) % 2 == 0) cell.setStyle("-fx-background-color: white");
+				else cell.setStyle("-fx-background-color: grey");
 
 				cell.setOnMouseClicked(event -> press(cell));
 				root.getChildren().add(cell);
@@ -87,16 +82,14 @@ public class MainWindow extends Scene {
 
 			if (chessBoard.figureInCell(prevY, prevX).canMoveTo(clckdY, clckdX)) chessBoard.figureInCell(prevY, prevX).movingFigure(clckdY, clckdX);
 
-			if (chessBoard.getCheck()) { //Проверка на шах
+			if (chessBoard.getCheck()) {
 				cleanBoard();
 				isMoving = false;
 				return;
-			} else { //Если не было шаха
+			} else {
 				if (chessBoard.figureInCell(clckdY, clckdX).getType() == FigureType.PAWN &&
 						Math.abs(clckdX - prevX) == 1 && Math.abs(clckdY - prevY) == 1 &&
-						chessBoard.figureInCell(prevY, clckdX) == null){
-					 buttons[prevY][clckdX].setGraphic(null);
-				}
+						chessBoard.figureInCell(prevY, clckdX) == null) buttons[prevY][clckdX].setGraphic(null);
 				bt.setGraphic(previousButton.getGraphic());
 				pawnToQueenCheck(clckdY, clckdX);
 				previousButton.setGraphic(null);
@@ -106,16 +99,14 @@ public class MainWindow extends Scene {
 					else whiteKing.setIsCastling(false);
 					isCastling(prevY, clckdX);
 				}
-
 				isMoving = false;
 				cleanBoard();
 				changePlayer();
 			}
-//			if (chessBoard.noMovesLeft(currentPlayer)){
-//			cleanBoard();
-//			enableButtons();
-//			showWinner(); }
-
+			if (chessBoard.noMovesLeft(currentPlayer)){
+			cleanBoard();
+			enableButtons();
+			showWinner(); }
 		}
 		chessBoard.printBoard();
 		previousButton = bt;
@@ -134,21 +125,20 @@ public class MainWindow extends Scene {
 						!blackKing.getIsCastling() && chessBoard.figureInCell(0, 7) != null &&
 						chessBoard.figureInCell(0, 7).getType() == FigureType.ROOK &&
 						!chessBoard.figureInCell(0, 7).getIsMoved() &&
-						chessBoard.isCellBroken(BLACK, 0, 5)){
+						chessBoard.isCellNotBroken(BLACK, 0, 5) && chessBoard.isCellNotBroken(BLACK, 0, 6)){
 					freeCellCheck(0, 6);
 				}
 				if (currentPlayer == BLACK && yPos == 0 && chessBoard.figureInCell(0, 1) == null &&
 						chessBoard.figureInCell(0, 3) == null && !blackKing.getIsCastling() &&
 						chessBoard.figureInCell(0, 0) != null && chessBoard.figureInCell(0, 0).getType() == FigureType.ROOK &&
-						!chessBoard.figureInCell(0, 0).getIsMoved() &&
-						chessBoard.isCellBroken(BLACK, 0, 3)){
+						!chessBoard.figureInCell(0, 0).getIsMoved() && chessBoard.isCellNotBroken(BLACK, 0, 3) && chessBoard.isCellNotBroken(BLACK, 0, 2)){
 					freeCellCheck(0, 2);
 				}
 				if (currentPlayer == WHITE && yPos == 7 && chessBoard.figureInCell(7, 5) == null &&
 						!whiteKing.getIsCastling() && chessBoard.figureInCell(7, 7) != null &&
 						chessBoard.figureInCell(7, 7).getType() == FigureType.ROOK &&
 						!chessBoard.figureInCell(7, 7).getIsMoved() &&
-						chessBoard.isCellBroken(WHITE, 7, 5)){
+						chessBoard.isCellNotBroken(WHITE, 7, 5) && chessBoard.isCellNotBroken(WHITE, 7, 6)){
 					freeCellCheck(7, 6);
 				}
 				if (currentPlayer == WHITE && yPos == 7 && chessBoard.figureInCell(7, 1) == null &&
@@ -156,7 +146,7 @@ public class MainWindow extends Scene {
 						chessBoard.figureInCell(7, 0) != null &&
 						chessBoard.figureInCell(7, 0).getType() == FigureType.ROOK &&
 						!chessBoard.figureInCell(7, 0).getIsMoved() &&
-						chessBoard.isCellBroken(WHITE, 7, 3)){
+						chessBoard.isCellNotBroken(WHITE, 7, 2) && chessBoard.isCellNotBroken(WHITE, 7, 3)){
 					freeCellCheck(7, 2);
 				}
 			}
@@ -368,9 +358,7 @@ public class MainWindow extends Scene {
 	}
 
 	private void changePlayer() {
-		if (currentPlayer == WHITE) {
-			currentPlayer = BLACK;
-		} else currentPlayer = WHITE;
+		if (currentPlayer == WHITE) currentPlayer = BLACK;
+		else currentPlayer = WHITE;
 	}
-
 }

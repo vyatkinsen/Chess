@@ -31,9 +31,7 @@ public class Board {
 	}
 
 	public void removeFromBoard(Figure removePiece) {
-		if (insideBoard(removePiece.getY(), removePiece.getX())) {
-			board[removePiece.getY()][removePiece.getX()] = null;
-		}
+		if (insideBoard(removePiece.getY(), removePiece.getX())) board[removePiece.getY()][removePiece.getX()] = null;
 	}
 
 	public void setFigureOnBoard(Figure chessPiece, int yPos, int xPos) {
@@ -88,11 +86,13 @@ public class Board {
 		int prevY, prevX;
 		Figure tempFigure;
 		List<Figure> correctFiguresList;
-		if (color == BLACK) correctFiguresList = new LinkedList<>(blackFiguresList);
-		else correctFiguresList = new LinkedList<>(whiteFiguresList);
+
+		if (color == BLACK) correctFiguresList = blackFiguresList;
+		else correctFiguresList = whiteFiguresList;
 
 		for (Figure currFigure: correctFiguresList) {
 			boolean move = currFigure.getIsMoved();
+			System.out.println(move);
 			for (int j = 0; j < 8; j++) {
 				for (int i = 0; i < 8; i++) {
 					if (currFigure.canMoveTo(j, i)) {
@@ -104,25 +104,8 @@ public class Board {
 
 						if (!isKingInCheck(color)) {
 							currFigure.moveWithoutCheck(prevY, prevX);
-							if (tempFigure != null) {
-								this.addNewFigure(j, i, tempFigure.getType(), tempFigure.getFigureColor());
-							}
+							if (tempFigure != null)	this.addNewFigure(j, i, tempFigure.getType(), tempFigure.getFigureColor());
 							currFigure.setIsMoved(move);
-							if (currFigure.getType() == FigureType.KING){
-								if (Math.abs(prevX - i) == 2 && Math.abs(prevY - j) == 0 && !move) {
-									switch (prevY) {
-										case 0 -> {
-											if (i == 6) this.addNewFigure(0, 7, FigureType.ROOK, 0);
-											else if (i == 2) this.addNewFigure(0, 0, FigureType.ROOK, 0);
-										}
-										case 7 -> {
-											if (i == 6) this.addNewFigure(7, 7, FigureType.ROOK, 1);
-											else if (i == 2) this.addNewFigure(7, 0, FigureType.ROOK, 1);
-										}
-									}
-								}
-							}
-
 							return false;
 						} else {
 							System.out.println("NO MOVE");
@@ -162,33 +145,25 @@ public class Board {
 	}
 
 	private void figuresListAdd(Figure piece, int color){
-		System.out.println(piece);
 		if (color == BLACK) blackFiguresList.add(piece);
 		else whiteFiguresList.add(piece);
 	}
 
 	public boolean isKingInCheck(int color) {
 		if (blackKing != null && whiteKing != null) {
-			if (color == BLACK) {
-				return blackKing.isKingInCheck(this.getWhiteFiguresList());
-			} else {
+			if (color == BLACK) return blackKing.isKingInCheck(this.getWhiteFiguresList());
+			else {
+				System.out.println("white");
 				return whiteKing.isKingInCheck(this.getBlackFiguresList());
 			}
 		} return false;
 	}
 
-	public boolean isCellBroken(int color, int yPos, int xPos) {
+	public boolean isCellNotBroken(int color, int yPos, int xPos) {
 		LinkedList<Figure> enemyFigures;
-		if (color == BLACK) {
-			enemyFigures = this.getWhiteFiguresList();
-		} else {
-			enemyFigures = this.getBlackFiguresList();
-		}
-		for (Figure enemyFigure : enemyFigures) {
-			if (enemyFigure.canMoveTo(yPos, xPos)) {
-				return false;
-			}
-		}
+		if (color == BLACK)	enemyFigures = this.getWhiteFiguresList();
+		else enemyFigures = this.getBlackFiguresList();
+		for (Figure enemyFigure : enemyFigures) if (enemyFigure.canMoveTo(yPos, xPos)) return false;
 		return true;
 	}
 
