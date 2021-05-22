@@ -1,5 +1,7 @@
 package main.java.sample;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,12 +10,13 @@ public class Board {
 	public static final int WHITE = 1;
 	private int yPawnBrokenCell = -1;
 	private int xPawnBrokenCell = -1;
+	private int colorOfPawnBrokenCell = -1;
 	private final Figure[][] board;
 	private LinkedList<Figure> blackFiguresList;
 	private LinkedList<Figure> whiteFiguresList;
 	private King blackKing;
 	private King whiteKing;
-	public boolean check;
+	private boolean check;
 
 	public Board() {
 		board = new Figure[8][8];
@@ -34,7 +37,7 @@ public class Board {
 	}
 
 	public void setFigureOnBoard(Figure chessPiece, int yPos, int xPos) {
-		if (insideBoard(yPos, xPos)) {
+		if (insideBoard(yPos, xPos) && chessPiece != null) {
 			board[yPos][xPos] = chessPiece;
 			chessPiece.setY(yPos);
 			chessPiece.setX(xPos);
@@ -154,6 +157,7 @@ public class Board {
 		return true;
 	}
 
+
 	public boolean isKingInCheck(int color) {
 		if (blackKing != null && whiteKing != null) {
 			if (color == BLACK) {
@@ -234,12 +238,32 @@ public class Board {
 		return yPawnBrokenCell;
 	}
 
+	public void setIsCheck(boolean check) {
+		this.check = check;
+	}
+
+	public void setWhiteFiguresList(LinkedList<Figure> list){
+		whiteFiguresList = list;
+	}
+
+	public void setBlackFiguresList(LinkedList<Figure> list){
+		blackFiguresList = list;
+	}
+
 	public void setxPawnBrokenCell(int xPawnBrokenCell) {
 		this.xPawnBrokenCell = xPawnBrokenCell;
 	}
 
 	public void setyPawnBrokenCell(int yPawnBrokenCell) {
 		this.yPawnBrokenCell = yPawnBrokenCell;
+	}
+
+	public int getColorOfPawnBrokenCell() {
+		return colorOfPawnBrokenCell;
+	}
+
+	public void setColorOfPawnBrokenCell(int colorOfPawnBrokenCell) {
+		this.colorOfPawnBrokenCell = colorOfPawnBrokenCell;
 	}
 
 	public void printBoard() {

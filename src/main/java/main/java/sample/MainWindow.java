@@ -92,12 +92,10 @@ public class MainWindow extends Scene {
 				isMoving = false;
 				return;
 			} else { //Если не было шаха
-				if (chessBoard.figureInCell(clckdY, clckdX).getType() == FigureType.PAWN && Math.abs(clckdX - prevX) == 1 && Math.abs(clckdY - prevY) == 1){
-					if (chessBoard.figureInCell(prevY, clckdX) == null){
-						buttons[prevY][clckdX].setGraphic(null);
-						chessBoard.setxPawnBrokenCell(-1);
-						chessBoard.setyPawnBrokenCell(-1);
-					}
+				if (chessBoard.figureInCell(clckdY, clckdX).getType() == FigureType.PAWN &&
+						Math.abs(clckdX - prevX) == 1 && Math.abs(clckdY - prevY) == 1 &&
+						chessBoard.figureInCell(prevY, clckdX) == null){
+					 buttons[prevY][clckdX].setGraphic(null);
 				}
 				bt.setGraphic(previousButton.getGraphic());
 				pawnToQueenCheck(clckdY, clckdX);
@@ -114,11 +112,11 @@ public class MainWindow extends Scene {
 				changePlayer();
 			}
 		}
-//		if (chessBoard.noMovesLeft(currentPlayer)) {
-//			cleanBoard();
-//			enableButtons();
-//			showWinner();
-//		}
+		if (chessBoard.noMovesLeft(currentPlayer)) {
+			cleanBoard();
+			enableButtons();
+			showWinner();
+		}
 		previousButton = bt;
 	}
 
@@ -183,13 +181,13 @@ public class MainWindow extends Scene {
 				}
 				if ((chessBoard.insideBoard(yPos + offset, xPos + 1) && chessBoard.figureInCell(yPos + offset, xPos + 1) != null &&
 						chessBoard.figureInCell(yPos + offset, xPos + 1).getFigureColor() != currentPlayer) ||
-						(yPos + offset == chessBoard.getyPawnBrokenCell() && xPos + 1 == chessBoard.getxPawnBrokenCell())) {
+						(yPos + offset == chessBoard.getyPawnBrokenCell() && xPos + 1 == chessBoard.getxPawnBrokenCell() && currentPlayer != chessBoard.getColorOfPawnBrokenCell())) {
 					buttons[yPos + offset][xPos + 1].setStyle("-fx-background-color: yellow");
 					buttons[yPos + offset][xPos + 1].setDisable(false);
 				}
 				if ((chessBoard.insideBoard(yPos + offset, xPos - 1) && chessBoard.figureInCell(yPos + offset, xPos - 1) != null &&
 						chessBoard.figureInCell(yPos + offset, xPos - 1).getFigureColor() != currentPlayer) ||
-						(yPos + offset == chessBoard.getyPawnBrokenCell() && xPos - 1 == chessBoard.getxPawnBrokenCell())) {
+						(yPos + offset == chessBoard.getyPawnBrokenCell() && xPos - 1 == chessBoard.getxPawnBrokenCell() && currentPlayer != chessBoard.getColorOfPawnBrokenCell())) {
 					buttons[yPos + offset][xPos - 1].setStyle("-fx-background-color: yellow");
 					buttons[yPos + offset][xPos - 1].setDisable(false);
 				}

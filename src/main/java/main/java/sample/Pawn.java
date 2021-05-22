@@ -25,9 +25,11 @@ public class Pawn extends Figure {
 				twoCell = -2;
 			}
 			if (yPos - this.getY() == oneCell && (xPos == this.getX() && target == null || Math.abs(this.getX() - xPos) == 1 && target != null) ||
-					(yPos == board.getyPawnBrokenCell() && xPos == board.getxPawnBrokenCell())) {
+					(yPos == board.getyPawnBrokenCell() && xPos == board.getxPawnBrokenCell() && this.getFigureColor() != board.getColorOfPawnBrokenCell())) {
 				return true;
-			} else return !isMoved && yPos - this.getY() == twoCell && xPos == this.getX() && board.figureInCell(this.getY() + oneCell, xPos) == null && board.figureInCell(this.getY() + twoCell, xPos) == null;
+			} else return !isMoved && yPos - this.getY() == twoCell && xPos == this.getX() &&
+					board.figureInCell(this.getY() + oneCell, xPos) == null &&
+					board.figureInCell(this.getY() + twoCell, xPos) == null;
 		}
 		else return false;
 	}

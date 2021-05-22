@@ -44,7 +44,7 @@ public abstract class Figure {
 	}
 
 	public void movingFigure(int yPos, int xPos) {
-		board.check = false;
+		board.setIsCheck(false);
 		int offset;
 		if (color == 0) offset = -1;
 		else offset = 1;
@@ -52,6 +52,7 @@ public abstract class Figure {
 		if (Math.abs(yPos - y) == 2 && board.isCellBrokenByPawn(yPos + offset, xPos, -offset)) { //Сохранение ячейки битого поля для взятия на проходе
 			board.setyPawnBrokenCell(yPos + offset);
 			board.setxPawnBrokenCell(xPos);
+			board.setColorOfPawnBrokenCell(color);
 		}
 		int col = -1;
 		int col2 = -1;
@@ -73,22 +74,29 @@ public abstract class Figure {
 
 		board.setFigureOnBoard(this, y, x);
 
-		if (type == FigureType.PAWN && board.figureInCell(yPos + offset, xPos) != null && board.figureInCell(yPos + offset, xPos).getFigureColor() != col && xPos == board.getxPawnBrokenCell() && yPos == board.getyPawnBrokenCell()) {
+		if (type == FigureType.PAWN && board.figureInCell(yPos + offset, xPos) != null &&
+				board.figureInCell(yPos + offset, xPos).getFigureColor() != col &&
+				xPos == board.getxPawnBrokenCell() && yPos == board.getyPawnBrokenCell() && color != board.getColorOfPawnBrokenCell()) {
 			if (board.figureInCell(yPos + offset, xPos).getType() == FigureType.PAWN) {
 				board.figureInCell(yPos + offset, xPos).removeFigure();
 			}
+		}
+
+		if (type == FigureType.PAWN && (yPos == board.getyPawnBrokenCell() && xPos == board.getxPawnBrokenCell() && this.getFigureColor() != board.getColorOfPawnBrokenCell())){
+			board.setxPawnBrokenCell(-1);
+			board.setyPawnBrokenCell(-1);
+			board.setColorOfPawnBrokenCell(-1);
 		}
 
 		if (type == FigureType.PAWN && (yPos == 0 && color == 1 || yPos == 7 && color == 0)){ //pawnToQueenCheck
 			if (color == 1) board.addNewFigure(0, xPos, FigureType.QUEEN, 1);
 			else board.addNewFigure(7, xPos, FigureType.QUEEN, 0);
 		}
-
-		if (col == 0 && board.isKingInCheck(0) || col == 1 && board.isKingInCheck(1)) {
+		if (color == 0 && board.isKingInCheck(0) || color == 1 && board.isKingInCheck(1)) {
 			board.figureInCell(yPos, xPos).removeFigure();
 			board.addNewFigure(prevY, prevX, tempFig.getType(), col);
 			if (secTempFig != null) board.addNewFigure(yPos, xPos, secTempFig.getType(), col2);
-			board.check = true;
+			board.setIsCheck(true);
 		}
 		isMoved = true;
 	}
