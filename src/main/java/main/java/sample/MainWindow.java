@@ -31,7 +31,7 @@ public class MainWindow extends Scene {
 
 	public void start(Stage boardStage) {
 		chessBoard = new Board();
-		chessBoard.initPat();
+		chessBoard.initBoard();
 		blackKing = chessBoard.getBlackKing();
 		whiteKing = chessBoard.getWhiteKing();
 
