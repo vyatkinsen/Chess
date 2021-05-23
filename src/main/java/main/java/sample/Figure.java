@@ -7,6 +7,8 @@ enum FigureType{
 }
 
 public abstract class Figure {
+	public static final int BLACK = 0;
+	public static final int WHITE = 1;
 	private int y;
 	private int x;
 	private final int color;

@@ -12,25 +12,36 @@ public class Pawn extends Figure {
 	}
 	
 	public boolean canMoveTo(int yPos, int xPos){
-		if(canMoveFigures(yPos, xPos)) {
-			int oneCell;
-			int twoCell;
-			Figure target = board.figureInCell(yPos, xPos);
+		if (canMoveFigures(yPos, xPos)) {
+			int offset;
+			if (this.getFigureColor() == WHITE) offset = -1;
+			else offset = 1;
 
-			if (this.getFigureColor() == 0) {
-				oneCell = 1;
-				twoCell = 2;
-			} else {
-				oneCell = -1;
-				twoCell = -2;
-			}
-			if (yPos - this.getY() == oneCell && (xPos == this.getX() && target == null || Math.abs(this.getX() - xPos) == 1 && target != null) ||
-					(yPos == board.getyPawnBrokenCell() && xPos == board.getxPawnBrokenCell() && this.getFigureColor() != board.getColorOfPawnBrokenCell())) {
-				return true;
-			} else return !isMoved && yPos - this.getY() == twoCell && xPos == this.getX() &&
-					board.figureInCell(this.getY() + oneCell, xPos) == null &&
-					board.figureInCell(this.getY() + twoCell, xPos) == null;
+			if (Math.abs(this.getY() - yPos) == 2 && this.getFigureColor() == BLACK && this.getY() == 1 &&
+					board.figureInCell(this.getY() + 1, this.getX()) == null &&
+					board.figureInCell(this.getY() + 2, this.getX()) == null) return true;
+
+			if (Math.abs(this.getY() - yPos) == 2 && this.getFigureColor() == 1 && this.getY() == 6 &&
+					board.figureInCell(this.getY() - 1, this.getX()) == null &&
+					board.figureInCell(this.getY() - 2, this.getX()) == null) return true;
+
+			if (board.insideBoard(this.getY() + offset, xPos) && board.figureInCell(this.getY() + offset, xPos) == null &&
+					Math.abs(this.getY() - yPos) == 1 && this.getX() == xPos) return true;
+
+			if (Math.abs(this.getY() - yPos) == 1 && Math.abs(this.getX() - xPos) == 1 &&
+					((board.insideBoard(this.getY() + offset, this.getX() + 1) &&
+							board.figureInCell(yPos + offset, this.getX() + 1) != null &&
+					board.figureInCell(this.getY() + offset, this.getX() + 1).getFigureColor() != this.getFigureColor()) ||
+					(this.getY() + offset == board.getyPawnBrokenCell() && this.getX() + 1 == board.getxPawnBrokenCell() &&
+							this.getFigureColor() != board.getColorOfPawnBrokenCell()))) return true;
+
+			return Math.abs(this.getY() - yPos) == 1 && Math.abs(this.getX() - xPos) == 1 &&
+					((board.insideBoard(this.getY() + offset, this.getX() - 1) &&
+							board.figureInCell(this.getY() + offset, this.getX() - 1) != null &&
+							board.figureInCell(this.getY() + offset, this.getX() - 1).getFigureColor() != this.getFigureColor()) ||
+							(this.getY() + offset == board.getyPawnBrokenCell() && this.getX() - 1 == board.getxPawnBrokenCell() &&
+									this.getFigureColor() != board.getColorOfPawnBrokenCell()));
 		}
-		else return false;
+		return false;
 	}
 }

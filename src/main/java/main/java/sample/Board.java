@@ -175,31 +175,37 @@ public class Board {
 		return true;
 	}
 
-	public void initBoard(){
-		blackKing = new King(this, BLACK, 0, 4);
+	public void initPat(){
+		blackKing = new King(this, BLACK, 1, 5);
 		whiteKing = new King(this, WHITE, 7, 4);
 		blackFiguresList = new LinkedList<>();
 		whiteFiguresList = new LinkedList<>();
 		blackFiguresList.add(blackKing);
 		whiteFiguresList.add(whiteKing);
-		addQueen(BLACK, 0, 3);
-		addQueen(WHITE, 7, 3);
+
+		addQueen(BLACK, 1, 7);
+		addQueen(WHITE, 0, 1);
 		addBishop(BLACK, 0, 2);
-		addBishop(WHITE, 7, 2);
-		addBishop(BLACK, 0, 5);
-		addBishop(WHITE, 7, 5);
-		addKnight(BLACK, 0, 1);
-		addKnight(WHITE, 7, 1);
+//		addBishop(WHITE, 7, 2);
+//		addBishop(BLACK, 0, 5);
+//		addBishop(WHITE, 7, 5);
+//		addKnight(BLACK, 0, 1);
+//		addKnight(WHITE, 7, 1);
 		addKnight(BLACK, 0, 6);
-		addKnight(WHITE, 7, 6);
-		addRook(BLACK, 0, 0);
+//		addKnight(WHITE, 7, 6);
+		addRook(BLACK, 2, 7);
 		addRook(BLACK, 0, 7);
 		addRook(WHITE, 7, 0);
 		addRook(WHITE, 7, 7);
-		for (int x = 0; x < 8; x++){
-			addPawn(BLACK, 1, x);
-			addPawn(WHITE, 6, x);
-		}
+//		for (int x = 0; x < 8; x++){
+//			addPawn(BLACK, 1, x);
+//			addPawn(WHITE, 6, x);
+//		}
+		addPawn(BLACK, 1, 6);
+		addPawn(BLACK, 1, 4);
+		addPawn(BLACK, 2, 5);
+		addPawn(BLACK, 3, 7);
+		addPawn(WHITE, 4, 7);
 	}
 
 	public LinkedList<Figure> getBlackFiguresList(){
