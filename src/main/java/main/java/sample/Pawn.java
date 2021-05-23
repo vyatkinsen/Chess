@@ -26,7 +26,8 @@ public class Pawn extends Figure {
 					board.figureInCell(this.getY() - 2, this.getX()) == null) return true;
 
 			if (board.insideBoard(this.getY() + offset, xPos) && board.figureInCell(this.getY() + offset, xPos) == null &&
-					Math.abs(this.getY() - yPos) == 1 && this.getX() == xPos) return true;
+					Math.abs(this.getY() - yPos) == 1 && this.getX() == xPos &&
+					(this.getFigureColor() == BLACK && this.getY() < yPos || this.getFigureColor() == WHITE && this.getY() > yPos)) return true;
 
 			if (Math.abs(this.getY() - yPos) == 1 && Math.abs(this.getX() - xPos) == 1 &&
 					((board.insideBoard(this.getY() + offset, this.getX() + 1) &&

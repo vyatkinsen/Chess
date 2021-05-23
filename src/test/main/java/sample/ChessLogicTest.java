@@ -44,60 +44,10 @@ class ChessLogicTest {
 	Queen blackQueen;
 	King blackKing;
 
-	@Test
-	void createNewBoard(){
-		whiteFiguresList = new LinkedList<>();
-		blackFiguresList = new LinkedList<>();
-		whitePawn0 = new Pawn(chessBoard, WHITE, 6, 0);
-		whitePawn1 = new Pawn(chessBoard, WHITE, 6, 1);
-		whitePawn2 = new Pawn(chessBoard, WHITE, 6, 2);
-		whitePawn3 = new Pawn(chessBoard, WHITE, 6, 3);
-		whitePawn4 = new Pawn(chessBoard, WHITE, 6, 4);
-		whitePawn5 = new Pawn(chessBoard, WHITE, 6, 5);
-		whitePawn6 = new Pawn(chessBoard, WHITE, 6, 6);
-		whitePawn7 = new Pawn(chessBoard, WHITE, 6, 7);
-		whiteLeftRook = new Rook(chessBoard, WHITE, 7, 0);
-		whiteRightRook = new Rook(chessBoard, WHITE, 7, 7);
-		whiteLeftKnight = new Knight(chessBoard, WHITE, 7, 1);
-		whiteRightKnight = new Knight(chessBoard, WHITE, 7, 6);
-		whiteLeftBishop = new Bishop(chessBoard, WHITE, 7, 2);
-		whiteRightBishop = new Bishop(chessBoard, WHITE, 7, 5);
-		whiteQueen = new Queen(chessBoard, WHITE, 7, 3);
-		whiteKing = new King(chessBoard, WHITE, 7, 4);
-
-		blackPawn0 = new Pawn(chessBoard, BLACK, 1, 0);
-		blackPawn1 = new Pawn(chessBoard, BLACK, 1, 1);
-		blackPawn2 = new Pawn(chessBoard, BLACK, 1, 2);
-		blackPawn3 = new Pawn(chessBoard, BLACK, 1, 3);
-		blackPawn4 = new Pawn(chessBoard, BLACK, 1, 4);
-		blackPawn5 = new Pawn(chessBoard, BLACK, 1, 5);
-		blackPawn6 = new Pawn(chessBoard, BLACK, 1, 6);
-		blackPawn7 = new Pawn(chessBoard, BLACK, 1, 7);
-		blackLeftRook = new Rook(chessBoard, BLACK, 0, 0);
-		blackRightRook = new Rook(chessBoard, BLACK, 0, 7);
-		blackLeftKnight = new Knight(chessBoard, BLACK, 0, 1);
-		blackRightKnight = new Knight(chessBoard, BLACK, 0, 6);
-		blackLeftBishop = new Bishop(chessBoard, BLACK, 0, 2);
-		blackRightBishop = new Bishop(chessBoard, BLACK, 0, 5);
-		blackQueen = new Queen(chessBoard, BLACK, 0, 3);
-		blackKing = new King(chessBoard, BLACK, 0, 4);
-
-		for (int y = 6; y < 8; y++) {
-			for (int x = 0; x < 8; x++) {
-				whiteFiguresList.add(chessBoard.figureInCell(y, x));
-			}
-		}
-
-		for (int y = 0; y < 2; y++) {
-			for (int x = 0; x < 8; x++) {
-				blackFiguresList.add(chessBoard.figureInCell(y, x));
-			}
-		}
-	}
 
 	@Test
 	void insideBoardTest(){
-		createNewBoard();
+		chessBoard.initBoard();
 		assertFalse(chessBoard.insideBoard(9, 0));
 		assertFalse(chessBoard.insideBoard(-2, 8));
 		assertFalse(chessBoard.insideBoard(2, 34));
@@ -110,7 +60,7 @@ class ChessLogicTest {
 
 	@Test
 	void figureInCellTest(){
-		createNewBoard();
+		chessBoard.initBoard();
 		assertFalse(chessBoard.figureInCell(1, 1) instanceof Queen);
 		assertFalse(chessBoard.figureInCell(7, 1) instanceof King);
 		assertFalse(chessBoard.figureInCell(7, 3) instanceof Bishop);
@@ -123,7 +73,7 @@ class ChessLogicTest {
 
 	@Test
 	void removeFromBoardTest(){
-		createNewBoard();
+		chessBoard.initBoard();
 
 		assertNotNull(chessBoard.figureInCell(0, 6));
 		chessBoard.removeFromBoard(chessBoard.figureInCell(0, 6));
@@ -152,7 +102,7 @@ class ChessLogicTest {
 
 	@Test
 	void setFigureOnBoardTest(){
-		createNewBoard();
+		chessBoard.initBoard();
 
 		assertNull(chessBoard.figureInCell(5, 5));
 		chessBoard.setFigureOnBoard(new Bishop(chessBoard, WHITE, 5, 5), 5 , 5);
