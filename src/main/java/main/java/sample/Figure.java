@@ -12,8 +12,8 @@ public abstract class Figure {
 	private final int color;
 	protected Board board;
 	protected boolean isMoved;
-	public FigureType type;
-	private boolean isCastling;
+	protected FigureType type;
+	protected boolean isCastling;
 
 	public Figure(Board board, int color, int y, int x) {
 		this.board = board;
@@ -59,10 +59,12 @@ public abstract class Figure {
 
 		if (type == FigureType.PAWN && ((yPos == 0 && color == 1) || (yPos == 7 && color == 0))){
 			if (color == 1) {
+				if (board.figureInCell(0, xPos) != null) board.figureInCell(0, xPos).removeFigureWithCheck();
 				board.addNewFigure(0, xPos, FigureType.QUEEN, 1);
 				tempFig = board.figureInCell(0, xPos);
 			}
 			else {
+				if (board.figureInCell(7, xPos) != null) board.figureInCell(7, xPos).removeFigureWithCheck();
 				board.addNewFigure(7, xPos, FigureType.QUEEN, 0);
 				tempFig = board.figureInCell(7, xPos);
 			}
@@ -79,8 +81,9 @@ public abstract class Figure {
 		if (type == FigureType.PAWN && board.figureInCell(yPos + offset, xPos) != null &&
 				board.figureInCell(yPos + offset, xPos).getFigureColor() != color &&
 				xPos == board.getxPawnBrokenCell() && yPos == board.getyPawnBrokenCell() && color != board.getColorOfPawnBrokenCell()) {
-			if (board.figureInCell(yPos + offset, xPos).getType() == FigureType.PAWN) board.figureInCell(yPos + offset, xPos).removeFigure();
+			if (board.figureInCell(yPos + offset, xPos).getType() == FigureType.PAWN) board.figureInCell(yPos + offset, xPos).removeFigureWithCheck();
 		}
+
 		if (type == FigureType.PAWN && (yPos == board.getyPawnBrokenCell() && xPos == board.getxPawnBrokenCell() && this.getFigureColor() != board.getColorOfPawnBrokenCell())){
 			board.setxPawnBrokenCell(-1);
 			board.setyPawnBrokenCell(-1);
@@ -96,12 +99,12 @@ public abstract class Figure {
 							board.figureInCell(0, 5) == null &&	board.figureInCell(0, 6) == null &&
 							!isCastling && board.figureInCell(0, 7) != null && board.figureInCell(0, 7).getType() == FigureType.ROOK &&
 							!board.figureInCell(0, 7).getIsMoved() && board.isCellNotBroken(0, 0, 5)) {
-						board.removeFromBoard(board.figureInCell(0, 7));
+						board.figureInCell(0, 7).removeFigureWithCheck();
 						board.addNewFigure(0, 5, FigureType.ROOK, 0);
 					} else if (xPos == 2 && board.figureInCell(0, 1) == null &&	board.figureInCell(0, 3) == null && !isCastling &&
 							board.figureInCell(0, 0) != null && board.figureInCell(0, 0).getType() == FigureType.ROOK &&
 							!board.figureInCell(0, 0).getIsMoved() && board.isCellNotBroken(0, 0, 3)) {
-						board.removeFromBoard(board.figureInCell(0, 7));
+						board.figureInCell(0, 7).removeFigureWithCheck();
 						board.addNewFigure(0, 3, FigureType.ROOK, 0);
 					}
 				}
@@ -110,12 +113,12 @@ public abstract class Figure {
 							board.figureInCell(7, 5) == null &&	board.figureInCell(7, 6) == null &&
 							!isCastling && board.figureInCell(7, 7) != null && board.figureInCell(7, 7).getType() == FigureType.ROOK &&
 							!board.figureInCell(7, 7).getIsMoved() && board.isCellNotBroken(1, 7, 5)) {
-						board.removeFromBoard(board.figureInCell(7, 7));
+						board.figureInCell(7, 7).removeFigureWithCheck();
 						board.addNewFigure(7, 5, FigureType.ROOK, 1);
 					} else if (xPos == 2 && board.figureInCell(7, 1) == null &&	board.figureInCell(7, 3) == null && !isCastling &&
 							board.figureInCell(7, 0) != null &&	board.figureInCell(7, 0).getType() == FigureType.ROOK &&
 							!board.figureInCell(7, 0).getIsMoved() && board.isCellNotBroken(1, 7, 3)) {
-						board.removeFromBoard(board.figureInCell(7, 0));
+						board.figureInCell(7, 0).removeFigureWithCheck();
 						board.addNewFigure(7, 3, FigureType.ROOK, 1);
 					}
 				}
@@ -123,16 +126,17 @@ public abstract class Figure {
 			isCastling = true;
 		}
 
+		if (board.figureInCell(yPos, xPos) != null) board.figureInCell(yPos, xPos).removeFigureWithCheck();
+
 		if (board.figureInCell(y, x) == this) board.removeFromBoard(this);
 
 		this.y = yPos;
 		this.x = xPos;
 
-		if (board.figureInCell(yPos, xPos) != null) board.figureInCell(yPos, xPos).removeFigure();
 		board.setFigureOnBoard(tempFig, y, x);
 
 		if (color == 0 && board.isKingInCheck(0) || color == 1 && board.isKingInCheck(1)) {
-			board.figureInCell(yPos, xPos).removeFigure();
+			board.figureInCell(yPos, xPos).removeFigureWithCheck();
 			board.addNewFigure(prevY, prevX, tempFig.getType(), col);
 			if (secTempFig != null) board.addNewFigure(yPos, xPos, secTempFig.getType(), col2);
 			board.setIsCheck(true);
@@ -151,6 +155,11 @@ public abstract class Figure {
 
 	public void removeFigure() {
 		board.removeFromBoard(this);
+		y = x = -1;
+	}
+
+	public void removeFigureWithCheck() {
+		board.removeFromBoardWithCheck(this);
 		y = x = -1;
 	}
 
@@ -250,5 +259,9 @@ public abstract class Figure {
 				x += colOffset;
 			} return true;
 		} else return false;
+	}
+
+	public boolean equal(Figure fig) {
+		return fig.getX() == x && fig.getY() == y && fig.getFigureColor() == color && fig.getType() == type && fig.board.equals(board);
 	}
 }

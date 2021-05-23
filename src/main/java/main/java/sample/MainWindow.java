@@ -1,5 +1,6 @@
 package main.java.sample;
 
+import com.sun.glass.ui.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -22,7 +23,7 @@ public class MainWindow extends Scene {
 	private Button previousButton;
 	private boolean isMoving = false;
 
-	private final Button[][] buttons = new Button[8][8];
+	public static final Button[][] buttons = new Button[8][8];
 
 	public MainWindow(Parent parent, double width, double height) {
 		super(parent, width, height);
@@ -50,11 +51,11 @@ public class MainWindow extends Scene {
 				cell.setMinWidth(100);
 				cell.setLayoutX(i * 100);
 				cell.setLayoutY(j * 100);
+				cell.setId(j + "" + i);
 				if (chessBoard.figureInCell(j, i) != null) cell.setGraphic(new ImageView("" + chessBoard.figureInCell(j, i) + chessBoard.figureInCell(j, i).getFigureColor() + ".png"));
 
 				if ((i + j) % 2 == 0) cell.setStyle("-fx-background-color: white");
 				else cell.setStyle("-fx-background-color: grey");
-
 				cell.setOnMouseClicked(event -> press(cell));
 				root.getChildren().add(cell);
 			}
@@ -361,4 +362,10 @@ public class MainWindow extends Scene {
 		if (currentPlayer == WHITE) currentPlayer = BLACK;
 		else currentPlayer = WHITE;
 	}
+
+
+	public Button[][] getButtons() {
+		return buttons;
+	}
+
 }

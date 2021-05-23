@@ -12,6 +12,8 @@ public class Board {
 	private final Figure[][] board;
 	private LinkedList<Figure> blackFiguresList;
 	private LinkedList<Figure> whiteFiguresList;
+	List<Figure> correctFiguresList;
+
 	private King blackKing;
 	private King whiteKing;
 	private boolean check;
@@ -32,6 +34,14 @@ public class Board {
 
 	public void removeFromBoard(Figure removePiece) {
 		if (insideBoard(removePiece.getY(), removePiece.getX())) board[removePiece.getY()][removePiece.getX()] = null;
+	}
+
+	public void removeFromBoardWithCheck(Figure removePiece) {
+		if (insideBoard(removePiece.getY(), removePiece.getX())) {
+			if (removePiece.getFigureColor() == BLACK) blackFiguresList.removeIf(removePiece::equal);
+			else whiteFiguresList.removeIf(removePiece::equal);
+			board[removePiece.getY()][removePiece.getX()] = null;
+		}
 	}
 
 	public void setFigureOnBoard(Figure chessPiece, int yPos, int xPos) {
@@ -85,11 +95,9 @@ public class Board {
 	public boolean noMovesLeft(int color) {
 		int prevY, prevX;
 		Figure tempFigure;
-		List<Figure> correctFiguresList;
-
 		if (color == BLACK) correctFiguresList = blackFiguresList;
 		else correctFiguresList = whiteFiguresList;
-
+		System.out.println(correctFiguresList);
 		for (Figure currFigure: correctFiguresList) {
 			boolean move = currFigure.getIsMoved();
 			for (int j = 0; j < 8; j++) {
@@ -102,6 +110,8 @@ public class Board {
 						currFigure.moveWithoutCheck(j, i);
 
 						if (!isKingInCheck(color)) {
+							System.out.println(currFigure);
+							System.out.println( j+ " " + i);
 							currFigure.moveWithoutCheck(prevY, prevX);
 							if (tempFigure != null)	this.addNewFigure(j, i, tempFigure.getType(), tempFigure.getFigureColor());
 							currFigure.setIsMoved(move);
@@ -144,8 +154,14 @@ public class Board {
 	}
 
 	private void figuresListAdd(Figure piece, int color){
-		if (color == BLACK) blackFiguresList.add(piece);
-		else whiteFiguresList.add(piece);
+		if (color == BLACK) {
+			blackFiguresList.removeIf(piece::equal);
+			blackFiguresList.add(piece);
+		}
+		else {
+			whiteFiguresList.removeIf(piece::equal);
+			whiteFiguresList.add(piece);
+		}
 	}
 
 	public boolean isKingInCheck(int color) {
@@ -220,14 +236,6 @@ public class Board {
 
 	public void setIsCheck(boolean check) {
 		this.check = check;
-	}
-
-	public void setWhiteFiguresList(LinkedList<Figure> list){
-		whiteFiguresList = list;
-	}
-
-	public void setBlackFiguresList(LinkedList<Figure> list){
-		blackFiguresList = list;
 	}
 
 	public void setxPawnBrokenCell(int xPawnBrokenCell) {
