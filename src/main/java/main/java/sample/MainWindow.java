@@ -22,7 +22,7 @@ public class MainWindow extends Scene {
 	private Button previousButton;
 	private boolean isMoving = false;
 
-	public static final Button[][] buttons = new Button[8][8];
+	private final Button[][] buttons = new Button[8][8];
 
 	public MainWindow(Parent parent, double width, double height) {
 		super(parent, width, height);
@@ -67,7 +67,7 @@ public class MainWindow extends Scene {
 
 		if (chessBoard.figureInCell(clckdY, clckdX) != null && chessBoard.figureInCell(clckdY, clckdX).getFigureColor() == currentPlayer) {
 			cleanBoard();
-			bt.setStyle("-fx-background-color: red");
+			bt.setStyle("-fx-background-color: lightcoral");
 			enableButtons();
 			bt.setDisable(false);
 			freeMoveGraphic(clckdY, clckdX, chessBoard.figureInCell(clckdY, clckdX).getType());
@@ -159,28 +159,23 @@ public class MainWindow extends Scene {
 			case ROOK -> verticalAndHorizontalMovesGraphic(yPos, xPos, false);
 			case PAWN -> {
 				if (currentPlayer == BLACK && yPos == 1 && chessBoard.figureInCell(yPos + 1, xPos) == null && chessBoard.figureInCell(yPos + 2, xPos) == null) {
-					buttons[yPos + 2][xPos].setStyle("-fx-background-color: yellow");
-					buttons[yPos + 2][xPos].setDisable(false);
+					freeCellCheck(yPos + 2, xPos);
 				}
 				if (currentPlayer == WHITE && yPos == 6 && chessBoard.figureInCell(yPos - 1, xPos) == null && chessBoard.figureInCell(yPos - 2, xPos) == null) {
-					buttons[yPos - 2][xPos].setStyle("-fx-background-color: yellow");
-					buttons[yPos - 2][xPos].setDisable(false);
+					freeCellCheck(yPos - 2, xPos);
 				}
 				if (chessBoard.insideBoard(yPos + offset, xPos) && chessBoard.figureInCell(yPos + offset, xPos) == null) {
-					buttons[yPos + offset][xPos].setStyle("-fx-background-color: yellow");
-					buttons[yPos + offset][xPos].setDisable(false);
+					freeCellCheck(yPos + offset, xPos);
 				}
 				if ((chessBoard.insideBoard(yPos + offset, xPos + 1) && chessBoard.figureInCell(yPos + offset, xPos + 1) != null &&
 						chessBoard.figureInCell(yPos + offset, xPos + 1).getFigureColor() != currentPlayer) ||
 						(yPos + offset == chessBoard.getyPawnBrokenCell() && xPos + 1 == chessBoard.getxPawnBrokenCell() && currentPlayer != chessBoard.getColorOfPawnBrokenCell())) {
-					buttons[yPos + offset][xPos + 1].setStyle("-fx-background-color: yellow");
-					buttons[yPos + offset][xPos + 1].setDisable(false);
+					freeCellCheck(yPos + offset, xPos + 1);
 				}
 				if ((chessBoard.insideBoard(yPos + offset, xPos - 1) && chessBoard.figureInCell(yPos + offset, xPos - 1) != null &&
 						chessBoard.figureInCell(yPos + offset, xPos - 1).getFigureColor() != currentPlayer) ||
 						(yPos + offset == chessBoard.getyPawnBrokenCell() && xPos - 1 == chessBoard.getxPawnBrokenCell() && currentPlayer != chessBoard.getColorOfPawnBrokenCell())) {
-					buttons[yPos + offset][xPos - 1].setStyle("-fx-background-color: yellow");
-					buttons[yPos + offset][xPos - 1].setDisable(false);
+					freeCellCheck(yPos + offset, xPos - 1);
 				}
 			}
 		}
@@ -283,11 +278,11 @@ public class MainWindow extends Scene {
 
 	private boolean freeCellCheck(int yPos, int xPos) {
 		if (chessBoard.figureInCell(yPos, xPos) == null) {
-			buttons[yPos][xPos].setStyle("-fx-background-color: yellow");
+			buttons[yPos][xPos].setStyle("-fx-background-color: lightgreen");
 			buttons[yPos][xPos].setDisable(false);
 		} else {
 			if (chessBoard.figureInCell(yPos, xPos).getFigureColor() != currentPlayer) {
-				buttons[yPos][xPos].setStyle("-fx-background-color: yellow");
+				buttons[yPos][xPos].setStyle("-fx-background-color: lightgreen");
 				buttons[yPos][xPos].setDisable(false);
 			}
 			return false;

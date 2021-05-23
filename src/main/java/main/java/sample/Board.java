@@ -12,12 +12,10 @@ public class Board {
 	private final Figure[][] board;
 	private LinkedList<Figure> blackFiguresList;
 	private LinkedList<Figure> whiteFiguresList;
-	List<Figure> correctFiguresList;
 
 	private King blackKing;
 	private King whiteKing;
 	private boolean check;
-
 
 	public Board() {
 		board = new Figure[8][8];
@@ -95,9 +93,10 @@ public class Board {
 	public boolean noMovesLeft(int color) {
 		int prevY, prevX;
 		Figure tempFigure;
-		if (color == BLACK) correctFiguresList = blackFiguresList;
-		else correctFiguresList = whiteFiguresList;
-		for (Figure currFigure: correctFiguresList) {
+		List<Figure> currentFiguresList;
+		if (color == BLACK) currentFiguresList = blackFiguresList;
+		else currentFiguresList = whiteFiguresList;
+		for (Figure currFigure: currentFiguresList) {
 			boolean move = currFigure.getIsMoved();
 			for (int j = 0; j < 8; j++) {
 				for (int i = 0; i < 8; i++) {
@@ -108,6 +107,7 @@ public class Board {
 
 						currFigure.moveWithoutCheck(j, i);
 						if (!isKingInCheck(color)) {
+							System.out.println(currFigure + " " + prevY + "" + prevX + " " + j + "" + i);
 							currFigure.moveWithoutCheck(prevY, prevX);
 							if (tempFigure != null)	this.addNewFigure(j, i, tempFigure.getType(), tempFigure.getFigureColor());
 							currFigure.setIsMoved(move);

@@ -7,43 +7,6 @@ class ChessLogicTest {
 	Board chessBoard = new Board();
 	public static final int BLACK = 0;
 	public static final int WHITE = 1;
-	LinkedList<Figure> whiteFiguresList;
-	LinkedList<Figure> blackFiguresList;
-
-	Pawn whitePawn0;
-	Pawn whitePawn1;
-	Pawn whitePawn2;
-	Pawn whitePawn3;
-	Pawn whitePawn4;
-	Pawn whitePawn5;
-	Pawn whitePawn6;
-	Pawn whitePawn7;
-	Rook whiteLeftRook;
-	Rook whiteRightRook;
-	Knight whiteLeftKnight;
-	Knight whiteRightKnight;
-	Bishop whiteLeftBishop;
-	Bishop whiteRightBishop;
-	Queen whiteQueen;
-	King whiteKing;
-
-	Pawn blackPawn0;
-	Pawn blackPawn1;
-	Pawn blackPawn2;
-	Pawn blackPawn3;
-	Pawn blackPawn4;
-	Pawn blackPawn5;
-	Pawn blackPawn6;
-	Pawn blackPawn7;
-	Rook blackLeftRook;
-	Rook blackRightRook;
-	Knight blackLeftKnight;
-	Knight blackRightKnight;
-	Bishop blackLeftBishop;
-	Bishop blackRightBishop;
-	Queen blackQueen;
-	King blackKing;
-
 
 	@Test
 	void insideBoardTest(){
@@ -120,23 +83,23 @@ class ChessLogicTest {
 	@Test
 	void bishopCanMoveToTest(){
 		Board bishopBoard = new Board();
-		whiteLeftBishop = new Bishop(bishopBoard, WHITE, 4, 4);
+		Bishop whiteLeftBishop = new Bishop(bishopBoard, WHITE, 4, 4);
 		assertTrue(whiteLeftBishop.canMoveTo(0, 0));
 		assertTrue(whiteLeftBishop.canMoveTo(1, 7));
 		assertTrue(whiteLeftBishop.canMoveTo(7, 1));
 		assertTrue(whiteLeftBishop.canMoveTo(7, 7));
 
-		whitePawn0 = new Pawn(bishopBoard, WHITE, 2, 2);
+		new Pawn(bishopBoard, WHITE, 2, 2);
 		assertFalse(whiteLeftBishop.canMoveTo(0, 0));
 
-		blackPawn0 = new Pawn(bishopBoard, BLACK, 6, 6);
+		new Pawn(bishopBoard, BLACK, 6, 6);
 		assertTrue(whiteLeftBishop.canMoveTo(6, 6));
 	}
 
 	@Test
-	void kingCanMoveTest(){
+	void kingCanMoveToTest(){
 		Board kingBoard = new Board();
-		whiteKing = new King(kingBoard, WHITE, 4, 4);
+		King whiteKing = new King(kingBoard, WHITE, 4, 4);
 
 		assertTrue(whiteKing.canMoveTo(4, 3));
 		assertTrue(whiteKing.canMoveTo(4, 5));
@@ -147,7 +110,7 @@ class ChessLogicTest {
 		assertTrue(whiteKing.canMoveTo(5, 3));
 		assertTrue(whiteKing.canMoveTo(5, 5));
 
-		whitePawn0 = new Pawn(kingBoard, WHITE, 5, 5);
+		new Pawn(kingBoard, WHITE, 5, 5);
 		assertFalse(whiteKing.canMoveTo(5, 5));
 
 	}
@@ -156,8 +119,8 @@ class ChessLogicTest {
 	void isKingInCheckTest(){
 		Board kingBoard = new Board();
 		LinkedList<Figure> enemyList = new LinkedList<>();
-		blackKing = new King(kingBoard, BLACK, 0, 4);
-		whiteQueen = new Queen(kingBoard, WHITE, 7, 3);
+		King blackKing = new King(kingBoard, BLACK, 0, 4);
+		Queen whiteQueen = new Queen(kingBoard, WHITE, 7, 3);
 		enemyList.add(whiteQueen);
 		assertFalse(blackKing.isKingInCheck(enemyList));
 
@@ -166,49 +129,49 @@ class ChessLogicTest {
 	}
 
 	@Test
-	void knightCanMoveTest(){
+	void knightCanMoveToTest(){
 		Board knightBoard = new Board();
-		whiteLeftKnight = new Knight(knightBoard, WHITE, 4, 4);
+		Knight whiteLeftKnight = new Knight(knightBoard, WHITE, 4, 4);
 
 		assertTrue(whiteLeftKnight.canMoveTo(3, 2));
 		assertTrue(whiteLeftKnight.canMoveTo(5, 2));
 		assertTrue(whiteLeftKnight.canMoveTo(3, 6));
 		assertTrue(whiteLeftKnight.canMoveTo(5, 6));
 
-		whitePawn0 = new Pawn(knightBoard, WHITE, 3, 2);
+		new Pawn(knightBoard, WHITE, 3, 2);
 		assertFalse(whiteLeftKnight.canMoveTo(3, 2));
 
-		blackPawn0 = new Pawn(knightBoard, BLACK, 3, 2);
+		new Pawn(knightBoard, BLACK, 3, 2);
 		assertTrue(whiteLeftKnight.canMoveTo(3, 2));
 	}
 
 	@Test
-	void pawnCanMoveTest(){
+	void pawnCanMoveToTest(){
 		Board pawnBoard = new Board();
-		blackPawn0 = new Pawn(pawnBoard, BLACK, 1, 0);
+		Pawn blackPawn0 = new Pawn(pawnBoard, BLACK, 1, 0);
 
 		assertTrue(blackPawn0.canMoveTo(3, 0));
 		assertTrue(blackPawn0.canMoveTo(2, 0));
 		assertFalse(blackPawn0.canMoveTo(2, 1));
 		assertFalse(blackPawn0.canMoveTo(3, 1));
 
-		blackPawn1 = new Pawn(pawnBoard, BLACK, 2, 0);
+		Pawn blackPawn1 = new Pawn(pawnBoard, BLACK, 2, 0);
 		assertFalse(blackPawn0.canMoveTo(2, 0));
 		assertFalse(blackPawn0.canMoveTo(3, 0));
 		blackPawn1.removeFigure();
 
-		whitePawn0 = new Pawn(pawnBoard, WHITE, 2, 1);
+		Pawn whitePawn0 = new Pawn(pawnBoard, WHITE, 2, 1);
 		assertTrue(blackPawn0.canMoveTo(2, 1));
 		whitePawn0.removeFigure();
 
-		whitePawn1 = new Pawn(pawnBoard, WHITE, 3, 1);
+		new Pawn(pawnBoard, WHITE, 3, 1);
 		assertFalse(blackPawn0.canMoveTo(3, 1));
 	}
 
 	@Test
 	void queenCanMoveToTest(){
 		Board queenBoard = new Board();
-		whiteQueen = new Queen(queenBoard, WHITE, 4, 4);
+		Queen whiteQueen = new Queen(queenBoard, WHITE, 4, 4);
 		assertTrue(whiteQueen.canMoveTo(0, 0));
 		assertTrue(whiteQueen.canMoveTo(1, 7));
 		assertTrue(whiteQueen.canMoveTo(7, 1));
@@ -219,38 +182,139 @@ class ChessLogicTest {
 		assertTrue(whiteQueen.canMoveTo(4, 0));
 		assertTrue(whiteQueen.canMoveTo(4, 7));
 
-		whitePawn0 = new Pawn(queenBoard, WHITE, 2, 2);
+		new Pawn(queenBoard, WHITE, 2, 2);
 		assertFalse(whiteQueen.canMoveTo(0, 0));
 
-		whitePawn1 = new Pawn(queenBoard, WHITE, 2, 4);
+		new Pawn(queenBoard, WHITE, 2, 4);
 		assertFalse(whiteQueen.canMoveTo(0, 4));
 
-		whitePawn2 = new Pawn(queenBoard, WHITE, 4, 6);
+		new Pawn(queenBoard, WHITE, 4, 6);
 		assertFalse(whiteQueen.canMoveTo(4, 7));
 
-		blackPawn0 = new Pawn(queenBoard, BLACK, 6, 6);
+		new Pawn(queenBoard, BLACK, 6, 6);
 		assertTrue(whiteQueen.canMoveTo(6, 6));
 	}
 
 	@Test
 	void rookCanMoveToTest(){
 		Board rookBoard = new Board();
-		whiteLeftRook = new Rook(rookBoard, WHITE, 4, 4);
+		Rook whiteLeftRook = new Rook(rookBoard, WHITE, 4, 4);
 		assertTrue(whiteLeftRook.canMoveTo(0, 4));
 		assertTrue(whiteLeftRook.canMoveTo(7, 4));
 		assertTrue(whiteLeftRook.canMoveTo(4, 0));
 		assertTrue(whiteLeftRook.canMoveTo(4, 7));
 
-		whitePawn0 = new Pawn(rookBoard, WHITE, 4, 1);
+		new Pawn(rookBoard, WHITE, 4, 1);
 		assertFalse(whiteLeftRook.canMoveTo(4, 0));
 
-		whitePawn1 = new Pawn(rookBoard, WHITE, 2, 4);
+		new Pawn(rookBoard, WHITE, 2, 4);
 		assertFalse(whiteLeftRook.canMoveTo(0, 4));
 
-		whitePawn2 = new Pawn(rookBoard, WHITE, 4, 6);
+		new Pawn(rookBoard, WHITE, 4, 6);
 		assertFalse(whiteLeftRook.canMoveTo(4, 7));
 
-		blackPawn0 = new Pawn(rookBoard, BLACK, 7, 4);
+		new Pawn(rookBoard, BLACK, 7, 4);
 		assertTrue(whiteLeftRook.canMoveTo(7, 4));
+	}
+
+	@Test
+	void canCastlingTest(){
+		chessBoard.initBoard();
+		chessBoard.figureInCell(7, 6).removeFigureWithCheck();
+		chessBoard.figureInCell(7, 5).removeFigureWithCheck();
+		assertSame(chessBoard.figureInCell(7, 4).getType(), FigureType.KING);
+		assertTrue(chessBoard.figureInCell(7, 4).canMoveTo(7, 6));
+		chessBoard.figureInCell(7, 4).movingFigure(7, 6);
+		assertSame(chessBoard.figureInCell(7, 6).getType(), FigureType.KING);
+		assertSame(chessBoard.figureInCell(7, 5).getType(), FigureType.ROOK);
+
+		chessBoard.initBoard();
+		chessBoard.figureInCell(0, 6).removeFigureWithCheck();
+		chessBoard.figureInCell(0, 5).removeFigureWithCheck();
+		assertSame(chessBoard.figureInCell(0, 4).getType(), FigureType.KING);
+		assertTrue(chessBoard.figureInCell(0, 4).canMoveTo(0, 6));
+		chessBoard.figureInCell(0, 4).movingFigure(0, 6);
+		assertSame(chessBoard.figureInCell(0, 6).getType(), FigureType.KING);
+		assertSame(chessBoard.figureInCell(0, 5).getType(), FigureType.ROOK);
+
+		chessBoard.initBoard();
+		chessBoard.figureInCell(7, 3).removeFigureWithCheck();
+		chessBoard.figureInCell(7, 2).removeFigureWithCheck();
+		chessBoard.figureInCell(7, 1).removeFigureWithCheck();
+		assertSame(chessBoard.figureInCell(7, 4).getType(), FigureType.KING);
+		assertTrue(chessBoard.figureInCell(7, 4).canMoveTo(7, 2));
+		chessBoard.figureInCell(7, 4).movingFigure(7, 2);
+		assertSame(chessBoard.figureInCell(7, 2).getType(), FigureType.KING);
+		assertSame(chessBoard.figureInCell(7, 3).getType(), FigureType.ROOK);
+
+		chessBoard.initBoard();
+		chessBoard.figureInCell(0, 3).removeFigureWithCheck();
+		chessBoard.figureInCell(0, 2).removeFigureWithCheck();
+		chessBoard.figureInCell(0, 1).removeFigureWithCheck();
+		assertSame(chessBoard.figureInCell(0, 4).getType(), FigureType.KING);
+		assertTrue(chessBoard.figureInCell(0, 4).canMoveTo(0, 2));
+		chessBoard.figureInCell(0, 4).movingFigure(0, 2);
+		assertSame(chessBoard.figureInCell(0, 2).getType(), FigureType.KING);
+		assertSame(chessBoard.figureInCell(0, 3).getType(), FigureType.ROOK);
+	}
+
+	@Test
+	void notCanCastlingTest(){
+		chessBoard.initBoard();
+		chessBoard.figureInCell(7, 6).removeFigureWithCheck();
+		assertSame(chessBoard.figureInCell(7, 4).getType(), FigureType.KING);
+		assertFalse(chessBoard.figureInCell(7, 4).canMoveTo(7, 6));
+		assertNull(chessBoard.figureInCell(7, 6));
+		assertNotSame(chessBoard.figureInCell(7, 5).getType(), FigureType.QUEEN);
+
+		chessBoard.figureInCell(7, 5).removeFigureWithCheck();
+		chessBoard.figureInCell(6, 5).removeFigureWithCheck();
+		chessBoard.figureInCell(6, 6).removeFigureWithCheck();
+		chessBoard.addNewFigure(6,6, FigureType.QUEEN, BLACK);
+
+		assertFalse(chessBoard.figureInCell(7, 4).canMoveTo(7, 6));
+		assertNull(chessBoard.figureInCell(7, 5));
+	}
+
+	@Test
+	void moveByPawnToBrokenCell(){
+		chessBoard.initBoard();
+		chessBoard.figureInCell(6, 1).movingFigure(4, 1);
+		chessBoard.figureInCell(1, 2).movingFigure(3, 2);
+		chessBoard.figureInCell(4, 1).movingFigure(3, 2);
+		chessBoard.figureInCell(1, 1).movingFigure(3, 1);
+		assertSame(chessBoard.figureInCell(3, 1).getType(), FigureType.PAWN);
+		assertNull(chessBoard.figureInCell(2, 1));
+		chessBoard.figureInCell(3, 2).movingFigure(2, 1);
+		assertSame(chessBoard.figureInCell(2, 1).getType(), FigureType.PAWN);
+		assertSame(chessBoard.figureInCell(2, 1).getFigureColor(), WHITE);
+		assertNull(chessBoard.figureInCell(3, 1));
+	}
+
+	@Test
+	void checkTest(){
+		chessBoard.initBoard();
+		chessBoard.figureInCell(6, 4).movingFigure(4, 4);
+		chessBoard.figureInCell(1, 5).movingFigure(3, 5);
+		chessBoard.figureInCell(7, 3).movingFigure(3, 7);
+		assertFalse(chessBoard.getCheck());
+		chessBoard.figureInCell(0, 4).movingFigure(1, 5);
+		assertTrue(chessBoard.getCheck());
+		assertNull(chessBoard.figureInCell(1, 5));
+		chessBoard.figureInCell(1, 6).movingFigure(2, 6);
+		assertFalse(chessBoard.getCheck());
+	}
+
+	@Test
+	void stalemateTest(){
+		chessBoard.initBoard();
+		chessBoard.figureInCell(6, 4).movingFigure(4, 4);
+		chessBoard.figureInCell(1, 5).movingFigure(3, 5);
+		chessBoard.figureInCell(6, 5).movingFigure(4, 5);
+
+		chessBoard.figureInCell(1, 6).movingFigure(3, 6);
+		chessBoard.figureInCell(7, 3).movingFigure(3, 7);
+		chessBoard.printBoard();
+		assertTrue(chessBoard.noMovesLeft(BLACK));
 	}
 }

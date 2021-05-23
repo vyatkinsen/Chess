@@ -104,12 +104,12 @@ public abstract class Figure {
 					if (xPos == 6 && board.figureInCell(yPos, 7) != null && !board.figureInCell(yPos, 7).getIsMoved() &&
 							board.figureInCell(0, 5) == null &&	board.figureInCell(0, 6) == null &&
 							!isCastling && board.figureInCell(0, 7) != null && board.figureInCell(0, 7).getType() == FigureType.ROOK &&
-							!board.figureInCell(0, 7).getIsMoved() && board.isCellNotBroken(0, 0, 5)) {
+							!board.figureInCell(0, 7).getIsMoved() && board.isCellNotBroken(0, 0, 5) && board.isCellNotBroken(0, 0, 6)) {
 						board.figureInCell(0, 7).removeFigureWithCheck();
 						board.addNewFigure(0, 5, FigureType.ROOK, 0);
 					} else if (xPos == 2 && board.figureInCell(0, 1) == null &&	board.figureInCell(0, 3) == null && !isCastling &&
 							board.figureInCell(0, 0) != null && board.figureInCell(0, 0).getType() == FigureType.ROOK &&
-							!board.figureInCell(0, 0).getIsMoved() && board.isCellNotBroken(0, 0, 3)) {
+							!board.figureInCell(0, 0).getIsMoved() && board.isCellNotBroken(0, 0, 3) && board.isCellNotBroken(0, 0, 2)) {
 						board.figureInCell(0, 7).removeFigureWithCheck();
 						board.addNewFigure(0, 3, FigureType.ROOK, 0);
 					}
@@ -118,12 +118,12 @@ public abstract class Figure {
 					if (xPos == 6 && board.figureInCell(yPos, 7) != null && !board.figureInCell(yPos, 7).getIsMoved() &&
 							board.figureInCell(7, 5) == null &&	board.figureInCell(7, 6) == null &&
 							!isCastling && board.figureInCell(7, 7) != null && board.figureInCell(7, 7).getType() == FigureType.ROOK &&
-							!board.figureInCell(7, 7).getIsMoved() && board.isCellNotBroken(1, 7, 5)) {
+							!board.figureInCell(7, 7).getIsMoved() && board.isCellNotBroken(1, 7, 5) && board.isCellNotBroken(1, 7, 6)) {
 						board.figureInCell(7, 7).removeFigureWithCheck();
 						board.addNewFigure(7, 5, FigureType.ROOK, 1);
 					} else if (xPos == 2 && board.figureInCell(7, 1) == null &&	board.figureInCell(7, 3) == null && !isCastling &&
 							board.figureInCell(7, 0) != null &&	board.figureInCell(7, 0).getType() == FigureType.ROOK &&
-							!board.figureInCell(7, 0).getIsMoved() && board.isCellNotBroken(1, 7, 3)) {
+							!board.figureInCell(7, 0).getIsMoved() && board.isCellNotBroken(1, 7, 3) && board.isCellNotBroken(1, 7, 2)) {
 						board.figureInCell(7, 0).removeFigureWithCheck();
 						board.addNewFigure(7, 3, FigureType.ROOK, 1);
 					}
