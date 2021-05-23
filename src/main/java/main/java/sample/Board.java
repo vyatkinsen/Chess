@@ -92,7 +92,6 @@ public class Board {
 
 		for (Figure currFigure: correctFiguresList) {
 			boolean move = currFigure.getIsMoved();
-			System.out.println(move);
 			for (int j = 0; j < 8; j++) {
 				for (int i = 0; i < 8; i++) {
 					if (currFigure.canMoveTo(j, i)) {
@@ -152,10 +151,7 @@ public class Board {
 	public boolean isKingInCheck(int color) {
 		if (blackKing != null && whiteKing != null) {
 			if (color == BLACK) return blackKing.isKingInCheck(this.getWhiteFiguresList());
-			else {
-				System.out.println("white");
-				return whiteKing.isKingInCheck(this.getBlackFiguresList());
-			}
+			else return whiteKing.isKingInCheck(this.getBlackFiguresList());
 		} return false;
 	}
 
