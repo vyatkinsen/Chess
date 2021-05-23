@@ -1,6 +1,5 @@
 package main.java.sample;
 
-import com.sun.glass.ui.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -362,10 +361,4 @@ public class MainWindow extends Scene {
 		if (currentPlayer == WHITE) currentPlayer = BLACK;
 		else currentPlayer = WHITE;
 	}
-
-
-	public Button[][] getButtons() {
-		return buttons;
-	}
-
 }

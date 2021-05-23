@@ -97,7 +97,6 @@ public class Board {
 		Figure tempFigure;
 		if (color == BLACK) correctFiguresList = blackFiguresList;
 		else correctFiguresList = whiteFiguresList;
-		System.out.println(correctFiguresList);
 		for (Figure currFigure: correctFiguresList) {
 			boolean move = currFigure.getIsMoved();
 			for (int j = 0; j < 8; j++) {
@@ -108,10 +107,7 @@ public class Board {
 						prevX = currFigure.getX();
 
 						currFigure.moveWithoutCheck(j, i);
-
 						if (!isKingInCheck(color)) {
-							System.out.println(currFigure);
-							System.out.println( j+ " " + i);
 							currFigure.moveWithoutCheck(prevY, prevX);
 							if (tempFigure != null)	this.addNewFigure(j, i, tempFigure.getType(), tempFigure.getFigureColor());
 							currFigure.setIsMoved(move);

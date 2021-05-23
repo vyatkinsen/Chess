@@ -45,13 +45,12 @@ public abstract class Figure {
 
 	public void movingFigure(int yPos, int xPos) {
 		board.setIsCheck(false);
-
 		int offset;
 		if (color == 0) offset = -1;
 		else offset = 1;
 		Figure tempFig = this;
 
-		if (Math.abs(yPos - y) == 2 && board.isCellBrokenByPawn(yPos + offset, xPos, -offset)) {
+		if (Math.abs(yPos - y) == 2 && board.isCellBrokenByPawn(yPos + offset, xPos, color)) {
 			board.setyPawnBrokenCell(yPos + offset);
 			board.setxPawnBrokenCell(xPos);
 			board.setColorOfPawnBrokenCell(color);

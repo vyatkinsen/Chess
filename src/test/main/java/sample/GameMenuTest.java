@@ -7,7 +7,6 @@ class GameMenuTest extends TestFXBase {
 	final String PLAY_BUTTON = "НОВАЯ ИГРА";
 	final String EXIT_BUTTON = "ВЫХОД";
 
-
 	@Test
 	public void playAndExitButtonsTest() {
 		Assertions.assertThat(GameMenu.newGame).hasText(PLAY_BUTTON);
