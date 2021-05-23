@@ -80,7 +80,12 @@ public abstract class Figure {
 		if (type == FigureType.PAWN && board.figureInCell(yPos + offset, xPos) != null &&
 				board.figureInCell(yPos + offset, xPos).getFigureColor() != color &&
 				xPos == board.getxPawnBrokenCell() && yPos == board.getyPawnBrokenCell() && color != board.getColorOfPawnBrokenCell()) {
-			if (board.figureInCell(yPos + offset, xPos).getType() == FigureType.PAWN) board.figureInCell(yPos + offset, xPos).removeFigureWithCheck();
+			if (board.figureInCell(yPos + offset, xPos).getType() == FigureType.PAWN) {
+				board.figureInCell(yPos + offset, xPos).removeFigureWithCheck();
+				board.setxPawnBrokenCell(-1);
+				board.setyPawnBrokenCell(-1);
+				board.setColorOfPawnBrokenCell(-1);
+			}
 		}
 
 		if (type == FigureType.PAWN && (yPos == board.getyPawnBrokenCell() && xPos == board.getxPawnBrokenCell() && this.getFigureColor() != board.getColorOfPawnBrokenCell())){
