@@ -107,7 +107,6 @@ public class Board {
 
 						currFigure.moveWithoutCheck(j, i);
 						if (!isKingInCheck(color)) {
-							System.out.println(currFigure + " " + prevY + "" + prevX + " " + j + "" + i);
 							currFigure.moveWithoutCheck(prevY, prevX);
 							if (tempFigure != null)	this.addNewFigure(j, i, tempFigure.getType(), tempFigure.getFigureColor());
 							currFigure.setIsMoved(move);

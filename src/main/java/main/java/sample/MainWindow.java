@@ -24,9 +24,9 @@ public class MainWindow extends Scene {
 
 	private final Button[][] buttons = new Button[8][8];
 
-	public MainWindow(Parent parent, double width, double height) {
-		super(parent, width, height);
-		root = (Pane) parent;
+	public MainWindow(Pane pane, double width, double height) {
+		super(pane, width, height);
+		root = pane;
 	}
 
 	public void start(Stage boardStage) {
