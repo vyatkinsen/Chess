@@ -70,7 +70,7 @@ public class MainWindow extends Scene {
 			bt.setStyle("-fx-background-color: lightcoral");
 			enableButtons();
 			bt.setDisable(false);
-			freeMoveGraphic(clckdY, clckdX, chessBoard.figureInCell(clckdY, clckdX).getType());
+			freeMoveGraphic(chessBoard.figureInCell(clckdY, clckdX));
 
 			if (isMoving) {
 				cleanBoard();
@@ -112,171 +112,39 @@ public class MainWindow extends Scene {
 		previousButton = bt;
 	}
 
-	private void freeMoveGraphic(int yPos, int xPos, FigureType type) {
+	private void freeMoveGraphic(Figure fig) {
 		int offset;
 		if (currentPlayer == WHITE) offset = -1;
 		else offset = 1;
-
-		switch (type) {
-			case KING -> {
-				verticalAndHorizontalMovesGraphic(yPos, xPos, true);
-				diagonalMovesGraphic(yPos, xPos, true);
-				if (currentPlayer == BLACK && yPos == 0 && chessBoard.figureInCell(0, 5) == null &&
-						!blackKing.getIsCastling() && chessBoard.figureInCell(0, 7) != null &&
-						chessBoard.figureInCell(0, 7).getType() == FigureType.ROOK &&
-						!chessBoard.figureInCell(0, 7).getIsMoved() &&
-						chessBoard.isCellNotBroken(BLACK, 0, 5) && chessBoard.isCellNotBroken(BLACK, 0, 6)){
-					freeCellCheck(0, 6);
-				}
-				if (currentPlayer == BLACK && yPos == 0 && chessBoard.figureInCell(0, 1) == null &&
-						chessBoard.figureInCell(0, 3) == null && !blackKing.getIsCastling() &&
-						chessBoard.figureInCell(0, 0) != null && chessBoard.figureInCell(0, 0).getType() == FigureType.ROOK &&
-						!chessBoard.figureInCell(0, 0).getIsMoved() && chessBoard.isCellNotBroken(BLACK, 0, 3) && chessBoard.isCellNotBroken(BLACK, 0, 2)){
-					freeCellCheck(0, 2);
-				}
-				if (currentPlayer == WHITE && yPos == 7 && chessBoard.figureInCell(7, 5) == null &&
-						!whiteKing.getIsCastling() && chessBoard.figureInCell(7, 7) != null &&
-						chessBoard.figureInCell(7, 7).getType() == FigureType.ROOK &&
-						!chessBoard.figureInCell(7, 7).getIsMoved() &&
-						chessBoard.isCellNotBroken(WHITE, 7, 5) && chessBoard.isCellNotBroken(WHITE, 7, 6)){
-					freeCellCheck(7, 6);
-				}
-				if (currentPlayer == WHITE && yPos == 7 && chessBoard.figureInCell(7, 1) == null &&
-						chessBoard.figureInCell(7, 3) == null && !whiteKing.getIsCastling() &&
-						chessBoard.figureInCell(7, 0) != null &&
-						chessBoard.figureInCell(7, 0).getType() == FigureType.ROOK &&
-						!chessBoard.figureInCell(7, 0).getIsMoved() &&
-						chessBoard.isCellNotBroken(WHITE, 7, 2) && chessBoard.isCellNotBroken(WHITE, 7, 3)){
-					freeCellCheck(7, 2);
-				}
-			}
-			case QUEEN -> {
-				verticalAndHorizontalMovesGraphic(yPos, xPos, false);
-				diagonalMovesGraphic(yPos, xPos, false);
-			}
-			case BISHOP -> diagonalMovesGraphic(yPos, xPos,false);
-			case KNIGHT -> horseMovesGraphic(yPos, xPos);
-			case ROOK -> verticalAndHorizontalMovesGraphic(yPos, xPos, false);
-			case PAWN -> {
-				if (currentPlayer == BLACK && yPos == 1 && chessBoard.figureInCell(yPos + 1, xPos) == null && chessBoard.figureInCell(yPos + 2, xPos) == null) {
-					freeCellCheck(yPos + 2, xPos);
-				}
-				if (currentPlayer == WHITE && yPos == 6 && chessBoard.figureInCell(yPos - 1, xPos) == null && chessBoard.figureInCell(yPos - 2, xPos) == null) {
-					freeCellCheck(yPos - 2, xPos);
-				}
-				if (chessBoard.insideBoard(yPos + offset, xPos) && chessBoard.figureInCell(yPos + offset, xPos) == null) {
-					freeCellCheck(yPos + offset, xPos);
-				}
-				if ((chessBoard.insideBoard(yPos + offset, xPos + 1) && chessBoard.figureInCell(yPos + offset, xPos + 1) != null &&
-						chessBoard.figureInCell(yPos + offset, xPos + 1).getFigureColor() != currentPlayer) ||
-						(yPos + offset == chessBoard.getyPawnBrokenCell() && xPos + 1 == chessBoard.getxPawnBrokenCell() && currentPlayer != chessBoard.getColorOfPawnBrokenCell())) {
-					freeCellCheck(yPos + offset, xPos + 1);
-				}
-				if ((chessBoard.insideBoard(yPos + offset, xPos - 1) && chessBoard.figureInCell(yPos + offset, xPos - 1) != null &&
-						chessBoard.figureInCell(yPos + offset, xPos - 1).getFigureColor() != currentPlayer) ||
-						(yPos + offset == chessBoard.getyPawnBrokenCell() && xPos - 1 == chessBoard.getxPawnBrokenCell() && currentPlayer != chessBoard.getColorOfPawnBrokenCell())) {
-					freeCellCheck(yPos + offset, xPos - 1);
+		if (fig.getType() == FigureType.PAWN){
+				if (currentPlayer == BLACK && fig.getY() == 1 && chessBoard.figureInCell(fig.getY() + 1, fig.getX()) == null &&
+						chessBoard.figureInCell(fig.getY() + 2, fig.getX()) == null) freeCellCheck(fig.getY() + 2, fig.getX());
+				if (currentPlayer == WHITE && fig.getY() == 6 && chessBoard.figureInCell(fig.getY() - 1, fig.getX()) == null &&
+						chessBoard.figureInCell(fig.getY() - 2, fig.getX()) == null) freeCellCheck(fig.getY() - 2, fig.getX());
+				if (chessBoard.insideBoard(fig.getY() + offset, fig.getX()) && chessBoard.figureInCell(fig.getY() + offset, fig.getX()) == null)
+					freeCellCheck(fig.getY() + offset, fig.getX());
+				if ((chessBoard.insideBoard(fig.getY() + offset, fig.getX() + 1) &&
+						chessBoard.figureInCell(fig.getY() + offset, fig.getX() + 1) != null &&
+						chessBoard.figureInCell(fig.getY() + offset, fig.getX() + 1).getFigureColor() != currentPlayer) ||
+						(fig.getY() + offset == chessBoard.getyPawnBrokenCell() &&
+								fig.getX() + 1 == chessBoard.getxPawnBrokenCell() && currentPlayer != chessBoard.getColorOfPawnBrokenCell()))
+					freeCellCheck(fig.getY() + offset, fig.getX() + 1);
+				if ((chessBoard.insideBoard(fig.getY() + offset, fig.getX() - 1) &&
+						chessBoard.figureInCell(fig.getY() + offset, fig.getX() - 1) != null &&
+						chessBoard.figureInCell(fig.getY() + offset, fig.getX() - 1).getFigureColor() != currentPlayer) ||
+						(fig.getY() + offset == chessBoard.getyPawnBrokenCell() &&
+								fig.getX() - 1 == chessBoard.getxPawnBrokenCell() && currentPlayer != chessBoard.getColorOfPawnBrokenCell()))
+					freeCellCheck(fig.getY() + offset, fig.getX() - 1);
+			} else {
+				for (int y = 0; y < 8; y++) {
+					for (int x = 0; x < 8; x++) {
+						if (fig.canMoveTo(y, x)) freeCellCheck(y, x);
+					}
 				}
 			}
 		}
-	}
 
-	private void diagonalMovesGraphic(int yPos, int xPos, boolean isOneStep) {
-		int j = xPos + 1;
-		for(int i = yPos-1; i >= 0; i--) {
-			if (chessBoard.insideBoard(i, j) && !freeCellCheck(i, j)) {
-				break;
-			}
-
-			if (j < 7) {
-				j++;
-			} else break;
-
-			if (isOneStep) {
-				break;
-			}
-		}
-
-		j = xPos - 1;
-		for (int i = yPos - 1; i >= 0; i--) {
-			if (chessBoard.insideBoard(i, j) && !freeCellCheck(i, j)) {
-				break;
-			}
-
-			if (j > 0) {
-				j--;
-			} else break;
-
-			if (isOneStep) {
-				break;
-			}
-		}
-
-		j = xPos - 1;
-		for (int i = yPos + 1; i < 8; i++) {
-			if (chessBoard.insideBoard(i, j) && !freeCellCheck(i, j)) {
-				break;
-			}
-
-			if (j > 0) {
-				j--;
-			} else break;
-
-			if (isOneStep) {
-				break;
-			}
-		}
-
-		j = xPos + 1;
-		for (int i = yPos + 1; i < 8; i++) {
-			if (chessBoard.insideBoard(i, j) && !freeCellCheck(i, j)) {
-				break;
-			}
-
-			if (j <7) {
-				j++;
-			} else break;
-
-			if (isOneStep) {
-				break;
-			}
-		}
-	}
-
-	private void verticalAndHorizontalMovesGraphic(int yPos, int xPos, boolean isOneStep) {
-		for (int i = yPos + 1; i < 8; i++) {
-			if (chessBoard.insideBoard(i, xPos) && !freeCellCheck(i, xPos)) break;
-			if (isOneStep) break;
-		}
-
-		for (int i = yPos - 1; i >= 0; i--){
-			if (chessBoard.insideBoard(i, xPos) && !freeCellCheck(i, xPos)) break;
-			if (isOneStep) break;
-		}
-
-		for (int j = xPos + 1; j < 8; j++) {
-			if (chessBoard.insideBoard(yPos, j) && !freeCellCheck(yPos, j)) break;
-			if (isOneStep) break;
-		}
-
-		for (int j = xPos - 1; j >= 0; j--) {
-			if (chessBoard.insideBoard(yPos, j) && !freeCellCheck(yPos, j)) break;
-			if (isOneStep) break;
-		}
-	}
-
-	private void horseMovesGraphic(int yPos, int xPos) {
-		if (chessBoard.insideBoard(yPos - 2, xPos + 1)) freeCellCheck(yPos - 2, xPos + 1);
-		if (chessBoard.insideBoard(yPos - 2, xPos - 1)) freeCellCheck(yPos - 2, xPos - 1);
-		if (chessBoard.insideBoard(yPos + 2, xPos + 1)) freeCellCheck(yPos + 2, xPos + 1);
-		if (chessBoard.insideBoard(yPos + 2, xPos - 1)) freeCellCheck(yPos + 2, xPos - 1);
-		if (chessBoard.insideBoard(yPos - 1, xPos + 2)) freeCellCheck(yPos - 1, xPos + 2);
-		if (chessBoard.insideBoard(yPos - 1, xPos - 2)) freeCellCheck(yPos - 1, xPos - 2);
-		if (chessBoard.insideBoard(yPos + 1, xPos + 2)) freeCellCheck(yPos + 1, xPos + 2);
-		if (chessBoard.insideBoard(yPos + 1, xPos - 2)) freeCellCheck(yPos + 1, xPos - 2);
-	}
-
-	private boolean freeCellCheck(int yPos, int xPos) {
+	private void freeCellCheck(int yPos, int xPos) {
 		if (chessBoard.figureInCell(yPos, xPos) == null) {
 			buttons[yPos][xPos].setStyle("-fx-background-color: lightgreen");
 			buttons[yPos][xPos].setDisable(false);
@@ -285,9 +153,7 @@ public class MainWindow extends Scene {
 				buttons[yPos][xPos].setStyle("-fx-background-color: lightgreen");
 				buttons[yPos][xPos].setDisable(false);
 			}
-			return false;
 		}
-		return true;
 	}
 
 	private void enableButtons() {
