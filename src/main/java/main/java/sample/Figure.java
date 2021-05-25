@@ -16,6 +16,7 @@ public abstract class Figure {
 	protected boolean isMoved;
 	protected FigureType type;
 	protected boolean isCastling;
+	protected boolean isQueen;
 
 	public Figure(Board board, int color, int y, int x) {
 		this.board = board;
@@ -63,14 +64,15 @@ public abstract class Figure {
 				if (board.figureInCell(0, xPos) != null) board.figureInCell(0, xPos).removeFigureWithCheck();
 				board.addNewFigure(0, xPos, FigureType.QUEEN, 1);
 				tempFig = board.figureInCell(0, xPos);
+				isQueen = true;
 			}
 			else {
 				if (board.figureInCell(7, xPos) != null) board.figureInCell(7, xPos).removeFigureWithCheck();
 				board.addNewFigure(7, xPos, FigureType.QUEEN, 0);
 				tempFig = board.figureInCell(7, xPos);
+				isQueen = true;
 			}
 		}
-
 		int col = -1;
 		int col2 = -1;
 		int prevY = y;
@@ -132,7 +134,7 @@ public abstract class Figure {
 			isCastling = true;
 		}
 
-		if (board.figureInCell(yPos, xPos) != null) board.figureInCell(yPos, xPos).removeFigureWithCheck();
+		if (board.figureInCell(yPos, xPos) != null && !isQueen) board.figureInCell(yPos, xPos).removeFigureWithCheck();
 
 		if (board.figureInCell(y, x) == this) board.removeFromBoard(this);
 
@@ -148,6 +150,7 @@ public abstract class Figure {
 			board.setIsCheck(true);
 		}
 		isMoved = true;
+		isQueen = false;
 	}
 
 	public void moveWithoutCheck(int yPos, int xPos) {

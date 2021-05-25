@@ -30,6 +30,14 @@
                     </descriptorRefs>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.6</version>
+                <configuration>
+                    <mainClass>main.java.sample.GameMenu</mainClass>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
