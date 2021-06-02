@@ -7,5 +7,5 @@
 
 Приложение написано на языке программирования Java и <b/>использует библиотеку JavaFX ver.11.0.2</b>
 <p/>Для запуска через консоль(MacOS, Linux) можно использовать <a href="https://github.com/vyatkinsen/Chess/blob/master/ConsoleStart/GameMenu.sh">GameMenu.sh</a>. <b/>Необходимо добавить JavaFX(именно с таким именем) библиотеку в директорию ConsoleStart.</b></p>
-<p/>![example](https://github.com/vyatkinsen/Chess/blob/master/example.gif)</p>
+<p/>![](example.gif)</p>
 <p/><i/>Является курсовым проектом по предмету "Технологии программирования" СПБПУ(Политех).</i></p>
